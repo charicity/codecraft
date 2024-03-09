@@ -7,6 +7,8 @@
 #include <vector>
 #include "Grid.h"
 #include "Park.h"
+#include <climits>
+#include <global.h>
 
 void Robot::input() {
     std::cin >> object_;
@@ -17,7 +19,7 @@ void Robot::input() {
 std::vector<Axis> Robot::get_path(int id) {
     int curx = pos_.x_, cury = pos_.y_;
     std::vector<Axis> path;
-    if(park[id].dis[curx][cury]==inf){
+    if(park[id].dis[curx][cury]==INT_MAX/2){
         return path;
     }
     int x = park[id].pos_.x_, y = park[id].pos_.y_;

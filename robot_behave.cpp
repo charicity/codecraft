@@ -3,9 +3,8 @@
 #include <iostream>
 
 #include "Frame.h"
-#include "Park.h"
 #include "Robot.h"
-
+#include "global.h"
 // 机器人选择物品与泊位的估值函数
 int getdis(Axis a, Axis b) { return abs(a.x_ - b.x_) + abs(a.y_ - b.y_); }
 int getw(Robot& robot, Goods& goods, Park& park) {
@@ -15,7 +14,7 @@ int getw(Robot& robot, Goods& goods, Park& park) {
 // 返回十个机器人的行动方向返回长度为10的{dx,dy}数组dx[4]={-1,0,0,1},dy[4]={0,-1,1,0};
 std::vector<Axis> get_robot_behave(Frame& current) {
     // 第i个机器人
-    std::vector<Axis> dir(kMAX_ROBOT, 0);
+    std::vector<Axis> dir(kMAX_ROBOT, Axis(0, 0));
     for (int i = 0; i < kMAX_ROBOT; i++) {  // 10
         Robot& robot = current.robot[i];
         // 如果robot已经扛着物品，则直接找最近的泊位

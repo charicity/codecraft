@@ -9,7 +9,6 @@
 #include "Ship.h"
 const int kMAX_PARK = 10;
 
-const int inf = 1e9;
 class Park {
    public:
     Park() : pos_{0, 0} {
