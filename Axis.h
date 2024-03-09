@@ -17,6 +17,12 @@ struct Axis {
         Axis res(x_ - offset.x_, y_ - offset.y_);
         return res;
     }
+    bool operator==(Axis offset) const {
+        return x_ == offset.x_ && y_ == offset.y_;
+    }
+    bool operator!=(Axis offset) const {
+        return x_ != offset.x_ || y_ != offset.y_;
+    }
 };
 
 const Axis kUP{-1, 0}, kRIGHT{0, 1}, kDOWN{1, 0}, kLEFT{0, -1}, kKEEP{0, 0};
