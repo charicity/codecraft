@@ -16,7 +16,7 @@ class Robot {
     bool status_;
 
     void input();
-    void find_path();
+    std::vector<Axis> get_path(Axis);
 };
 
 #endif
