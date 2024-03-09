@@ -3,8 +3,8 @@
 #include <iostream>
 
 void Grid::input() {
-    for (int i = 0; i < 200; ++i) {
-        for (int j = 0; j < 200; ++j) {
+    for (int i = 0; i < kMAX_GRID; ++i) {
+        for (int j = 0; j < kMAX_GRID; ++j) {
             char c;
             do {
                 std::cin >> c;
