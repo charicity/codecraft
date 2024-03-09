@@ -4,6 +4,7 @@
 #include <set>
 
 #include "Axis.h"
+#include "Goods.h"
 
 const int kMAX_GRID = 200;
 

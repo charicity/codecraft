@@ -27,10 +27,7 @@ class Robot {
     Axis pos_;
 
     void input();
-    // robot去哪个点的路径
-    std::vector<Axis> get_path(Axis);
-    // robot去哪拿哪个货物再去哪个
-    void get_which_good_and_ship();
 };
+
 
 #endif
