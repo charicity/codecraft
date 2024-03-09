@@ -19,6 +19,8 @@ class Robot {
     Axis pos_;
 
     void input();
+    //返回dx,dy表示他的行走方向
+    Axis get_dir();
     // 返回机器人到id号泊位的最短路径,如果v.size()等于0则没路径
     std::vector<Axis> get_path(int id);
     //返回机器人到id号泊位的最短距离长度
