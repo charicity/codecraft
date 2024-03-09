@@ -20,7 +20,7 @@ std::vector<Axis> Robot::get_path(Axis destination) {
     q.push(pos_);
     for(int i=0;i<kMAX_GRID;i++){
         for(int j=0;j<kMAX_GRID;j++){
-            pre[i][j]={-1,-1};
+            pre[i][j]={-1,-1}
             vis[i][j]=0;
         }
     }
@@ -32,7 +32,7 @@ std::vector<Axis> Robot::get_path(Axis destination) {
         {
             int x=u.x_+dx[i],y=u.y_+dy[i];
             if(x<0 || y<0 || x>=kMAX_GRID || y>=kMAX_GRID)continue;
-            if( grid.grid_[x][y]==grid.barrier || grid.grid_[x][y]==grid.ocean )continue;
+            if( grid[x][y]==Grid::barrier || grid.grid[x][y]==Grid::ocean )continue;
             q.push({x,y});
             vis[x][y]=1;
             pre[x][y]={x,y};
