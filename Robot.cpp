@@ -65,7 +65,6 @@ Axis Robot::get_dir() {
         }
     }
 
-
     // 求出bfs矩阵
     std::vector<std::vector<int>> dis(kMAX_GRID,
                                       std::vector<int>(kMAX_GRID, INT_MAX / 2));
@@ -92,7 +91,7 @@ Axis Robot::get_dir() {
         }
     }
 
-    //枚举货物和泊位算最优权值解
+    // 枚举货物和泊位算最优权值解
     double maxw = 0;
     Goods maxgood;
     int parkid = 0;
@@ -112,9 +111,9 @@ Axis Robot::get_dir() {
             }
         }
     }
-    
+
     // 没得走
-    if(maxw==0)return {0, 0};
+    if (maxw == 0) return {0, 0};
 
     // 计算机器人到货物的路径（一定存在路径）
     assert(dis[maxgood.pos_.x_][maxgood.pos_.y_] != INT_MAX / 2);
