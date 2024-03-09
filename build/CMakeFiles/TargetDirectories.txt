@@ -1,3 +1,0 @@
-/home/gene/Codecraft/build/CMakeFiles/main.dir
-/home/gene/Codecraft/build/CMakeFiles/edit_cache.dir
-/home/gene/Codecraft/build/CMakeFiles/rebuild_cache.dir
