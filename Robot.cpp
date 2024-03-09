@@ -1,9 +1,15 @@
-#include<iostream>
 #include "Robot.h"
 
-void Robot::input(){
-    std::cin>>object_;
-    pos_.input();
-    std::cin>>status_;
+#include <iostream>
+
+void Robot::input() {
+  std::cin >> object_;
+  pos_.input();
+  std::cin >> status_;
 }
 
+void Robot::find_path() {
+  int a, b;
+  std::cin >> a >> b;
+  
+}
