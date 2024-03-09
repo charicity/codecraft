@@ -27,6 +27,6 @@ class Park {
     void init();
 };
 
-Park parks[kMAX_PARK];
+Park park[kMAX_PARK];
 
 #endif

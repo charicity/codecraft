@@ -1,7 +1,10 @@
 #ifndef GOODS_H
 #define GOODS_H
 
+#include <set>
+
 #include "Axis.h"
+
 class Goods {
    public:
     Axis pos_{0, 0};
@@ -9,4 +12,6 @@ class Goods {
 
     void input();
 };
+
+std::set<Goods> allGoods;
 #endif
