@@ -3,15 +3,16 @@
 
 #include "Axis.h"
 
-class Robot {
-    public:
+const int kMAX_ROBOT = 10;
 
-    bool object_;
+class Robot {
+   public:
+    bool object_;       // 是否正在扛着物品
+    bool status_;       // 机器人状态 （0恢复中，1正常）
+    int object_value_;  // 机器人扛着的物品的价值
     Axis pos_;
-    bool status_;
 
     void input();
-
 };
 
 #endif
