@@ -8,6 +8,9 @@ class Robot {
     int object_;
     Axis pos_;
     bool status_;
+
+    public:
+    void input();
 };
 
 #endif
