@@ -1,5 +1,6 @@
 #include "Park.h"
 
+#include <climits>
 #include <iostream>
 
 #include "Axis.h"
@@ -18,7 +19,7 @@ void Park::init() {
     for (int i = 0; i < kMAX_GRID; i++) {
         for (int j = 0; j < kMAX_GRID; j++) {
             pre[i][j] = {-1, -1};
-            dis[i][j] = inf;
+            dis[i][j] = INT_MAX / 2;
         }
     }
     int dx[4] = {-1, 0, 0, 1}, dy[4] = {0, -1, 1, 0};
@@ -32,7 +33,7 @@ void Park::init() {
             if (grid[x][y].state_ == Grid::barrier ||
                 grid[x][y].state_ == Grid::ocean)
                 continue;
-            if (dis[x][y] != inf) continue;
+            if (dis[x][y] != INT_MAX / 2) continue;
             q.push({x, y});
             dis[x][y] = dis[u.x_][u.y_] + 1;
             pre[x][y] = {u.x_, u.y_};
