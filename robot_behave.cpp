@@ -5,11 +5,11 @@
 #include "Frame.h"
 #include "Robot.h"
 #include "global.h"
+#include "Axis.h"
 // 机器人选择物品与泊位的估值函数
-int getdis(Axis a, Axis b) { return abs(a.x_ - b.x_) + abs(a.y_ - b.y_); }
 double getw(Robot& robot, Goods& goods, Park& park) {
     int val = goods.value_;
-    int dis = getdis(robot.pos_, goods.pos_) + getdis(goods.pos_, park.pos_);
+    int dis = get_distance(robot.pos_, goods.pos_) + get_distance(goods.pos_, park.pos_);
     if (dis == 0) return INT_MAX / 2;
     return val / (double)dis;
 }
@@ -41,7 +41,7 @@ std::vector<Axis> get_robot_behave(Frame& current) {
                     double w = getw(robot, goods, park[id]);
                     if(w>maxw){
                         maxw = w;
-
+                
                     }
                 }
             }

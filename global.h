@@ -16,4 +16,5 @@ extern Grid grid[kMAX_GRID][kMAX_GRID];
 
 extern Park park[kMAX_PARK];
 
+extern int get_distance(Axis a, Axis b);
 #endif
