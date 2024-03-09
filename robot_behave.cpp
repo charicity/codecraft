@@ -5,10 +5,11 @@
 #include "Frame.h"
 #include "Robot.h"
 #include "global.h"
+#include "Axis.h"
 // 机器人选择物品与泊位的估值函数
 double getw(Robot& robot, Goods& goods, Park& park) {
     int val = goods.value_;
-    int dis = getdis(robot.pos_, goods.pos_) + getdis(goods.pos_, park.pos_);
+    int dis = get_distance(robot.pos_, goods.pos_) + get_distance(goods.pos_, park.pos_);
     if (dis == 0) return INT_MAX / 2;
     return val / (double)dis;
 }

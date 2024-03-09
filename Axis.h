@@ -32,4 +32,5 @@ class Axis {
 int get_distance(Axis a,Axis b){
     return abs(a.x_ - b.x_) + abs(a.y_ - b.y_);
 }
+
 #endif
