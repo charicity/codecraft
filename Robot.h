@@ -30,7 +30,7 @@ class Robot {
     // robot去哪个点的路径
     std::vector<Axis> get_path(Axis);
     // robot去哪拿哪个货物再去哪个
-    get_which_good_and_ship();
+    void get_which_good_and_ship();
 };
 
 #endif
