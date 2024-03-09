@@ -27,7 +27,8 @@ class Robot {
     Axis pos_;
 
     void input();
+    // 返回机器人到id号泊位的最短路径,如果v.size()等于0则没路径
+    std::vector<Axis> get_path(int id);
 };
-
 
 #endif

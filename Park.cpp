@@ -12,7 +12,6 @@ void Park::init() {
     // 预处理出从该泊位到达每个位置的bfs路径
     std::queue<Axis> q;
     q.push(pos_);
-    const int inf = 1e9;
     for (int i = 0; i < kMAX_GRID; i++) {
         for (int j = 0; j < kMAX_GRID; j++) {
             pre[i][j] = {-1, -1};
