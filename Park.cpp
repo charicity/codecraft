@@ -3,6 +3,9 @@
 #include <iostream>
 
 #include "Axis.h"
+#include "global.h"
+
+Park park[kMAX_PARK];
 
 void Park::init() {
     Axis tmp;

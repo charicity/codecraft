@@ -4,6 +4,7 @@
 #include "Grid.h"
 #include "Park.h"
 #include "Ship.h"
+#include "global.h"
 #include "iostream"
 
 class ControlLogic {
@@ -27,18 +28,17 @@ class ControlLogic {
     void init_initialize() {
         ;
         std::cout << "OK" << std::endl;
+        std::cout.flush();
     }
 
     // 输入一帧
-    void frame_input(Frame &current) {
-        current.input();
-        ;
-    }
+    bool frame_input(Frame &current) { return current.input(); }
 
     // 对那一帧进行
     void frame_output() {
         ;
         std::cout << "OK" << std::endl;
+        std::cout.flush();
     }
 };
 #endif
