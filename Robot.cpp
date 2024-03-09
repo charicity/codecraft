@@ -13,8 +13,11 @@
 
 void Robot::input() {
     std::cin >> object_;
+    // std::cerr << object_ << " ";
     pos_.input();
     std::cin >> status_;
+    // std::cerr << status_ << " ";
+    // std::cerr << std::endl;
 }
 
 std::vector<Axis> Robot::get_path(int id) {

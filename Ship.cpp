@@ -8,4 +8,7 @@ int Ship::capacity_ = 0;
 
 void Ship::input() { std::cin >> status_ >> parkid_; }
 
-void Ship::init() { std::cin >> Ship::capacity_; }
+void Ship::init() {
+    std::cin >> Ship::capacity_;
+    // std::cerr << "Capacity: " << capacity_ << std::endl;
+}

@@ -5,9 +5,9 @@
 #include "Step.h"
 
 int main() {
-    std::ios::sync_with_stdio(0);
-    std::cin.tie(0);
-    std::cout.tie(0);
+    // std::ios::sync_with_stdio(0);
+    // std::cin.tie(0);
+    // std::cout.tie(0);
 
     ControlLogic step;
     step.init_input();
