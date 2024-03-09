@@ -6,3 +6,4 @@ void Robot::input(){
     pos_.input();
     std::cin>>status_;
 }
+
