@@ -31,3 +31,4 @@ std::vector<Axis> Robot::get_path(int id) {
     }
     return path;
 }
+int Robot::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
