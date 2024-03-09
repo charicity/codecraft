@@ -38,11 +38,11 @@ std::vector<Axis> Robot::get_path(int id) {
     return path;
 }
 
-// 得到机器人到park[id]的最短路径的长度
-int Goods::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
-
 // dis1为从机器人到货物的最短距离，dis2为从货物到泊位的最短距离 ,权值计算函数
 double getw(int dis1, int dis2, int val) { return (double)val / (dis1 + dis2); }
+
+// 得到机器人到park[id]的最短路径的长度
+int Robot::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
 
 // robot到哪里取货
 Axis Robot::get_dir() {
@@ -117,7 +117,7 @@ Axis Robot::get_dir() {
 
     // 计算机器人到货物的路径（一定存在路径）
     assert(dis[maxgood.pos_.x_][maxgood.pos_.y_] != INT_MAX / 2);
-    int x = maxgood.pos_.x_, y = maxgood.pos_.y_;
+    x = maxgood.pos_.x_, y = maxgood.pos_.y_;
     while (pre[x][y] != Axis(pos_.x_, pos_.y_)) {
         x = pre[x][y].x_;
         y = pre[x][y].y_;

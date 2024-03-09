@@ -3,6 +3,7 @@
 
 #include <set>
 #include <vector>
+
 #include "Axis.h"
 
 class Goods {
@@ -12,8 +13,10 @@ class Goods {
     void input();
     // 返回货物到id号泊位的最短路径,如果v.size()等于0则没路径
     std::vector<Axis> get_path(int id);
-    //返回货物到id号泊位的最短距离长度
+    // 返回货物到id号泊位的最短距离长度
     int get_dis(int id);
+
+    bool operator<(Goods a) const { return value_ < a.value_; }
 };
 
 #endif

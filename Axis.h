@@ -1,6 +1,7 @@
 #ifndef AXIS_H
 #define AXIS_H
 #include <climits>
+#include <cmath>
 class Axis {
    public:
     int x_, y_;
@@ -28,9 +29,5 @@ class Axis {
         return x_ != offset.x_ || y_ != offset.y_;
     }
 };
-
-int get_distance(Axis a,Axis b){
-    return abs(a.x_ - b.x_) + abs(a.y_ - b.y_);
-}
 
 #endif
