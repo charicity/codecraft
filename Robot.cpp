@@ -122,9 +122,5 @@ Axis Robot::get_dir() {
         x = pre[x][y].x_;
         y = pre[x][y].y_;
     }
-
-    // 执行操作
-    allGoods.erase(maxgood);
-
     return {x - pos_.x_, y - pos_.y_};
 }
