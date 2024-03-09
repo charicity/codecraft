@@ -8,10 +8,15 @@
 #include "Grid.h"
 #include "Ship.h"
 const int kMAX_PARK = 10;
+
 const int inf = 1e9;
 class Park {
    public:
-    Park(Axis pos, int time, int velocity) {
+    Park() : pos_{0, 0} {
+        time_ = 0;
+        velocity_ = 0;
+    }
+    Park(Axis pos, int time = 0, int velocity = 0) {
         pos_ = pos;
         time_ = time;
         velocity_ = velocity;
@@ -28,7 +33,5 @@ class Park {
     // 初始化泊位信息以及泊位到每个点的bfs路线
     void init();
 };
-
-Park park[kMAX_PARK];
 
 #endif

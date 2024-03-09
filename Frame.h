@@ -19,6 +19,6 @@ class Frame {
     Ship ship[kMAX_SHIP];
     Robot robot[kMAX_ROBOT];
 
-    void input();
+    bool input();
 };
 #endif

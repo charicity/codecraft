@@ -7,14 +7,6 @@
 #include <queue>
 #include <string>
 #include <vector>
-const int kMAX_ROBOT = 10;
-
-#include <algorithm>
-#include <cmath>
-#include <iostream>
-#include <queue>
-#include <string>
-#include <vector>
 
 #include "Axis.h"
 const int kMAX_ROBOT = 10;

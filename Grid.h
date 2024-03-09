@@ -16,6 +16,5 @@ class Grid {
     static const int empty = 0, ocean = 1, barrier = 2, robot = 3, park = 4;
     void init();
 };
-Grid grid[kMAX_GRID][kMAX_GRID];
 
 #endif

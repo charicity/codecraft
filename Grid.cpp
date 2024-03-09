@@ -1,6 +1,7 @@
 #include "Grid.h"
 
 #include <iostream>
+Grid grid[kMAX_GRID][kMAX_GRID];
 
 void Grid::init() {
     char c;
