@@ -22,6 +22,10 @@ class ControlLogic {
         }
 
         Ship::init();
+
+        std::string s;
+        std::cin >> s;
+        std::cerr << "OK VS " << s << std::endl;
     }
 
     // 初始化处理
@@ -32,11 +36,20 @@ class ControlLogic {
     }
 
     // 输入一帧
-    bool frame_input(Frame &current) { return current.input(); }
+    bool frame_input(Frame &current) {
+        bool f = current.input();
+        if (f == false) return false;
+        std::string s;
+        std::cin >> s;
+        std::cerr << "OK VS " << s << std::endl;
+        return true;
+    }
 
-    // 对那一帧进行
+    // 对那一帧进行操作
     void frame_output() {
-        ;
+        for (int i = 0; i < 4; ++i) {
+            std::cout << "ship 0 0" << std::endl;
+        }
         std::cout << "OK" << std::endl;
         std::cout.flush();
     }
