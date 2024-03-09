@@ -7,7 +7,7 @@
 #include "Goods.h"
 
 class FrameInfo {
-   private:
+   public:
     int FrameCode_, CurrentMoney_{0};
     int NewGoodsCount_;
     std::vector<Goods> GoodPos_;

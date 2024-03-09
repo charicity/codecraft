@@ -2,6 +2,7 @@
 #define AXIS_H
 
 struct Axis {
+   public:
     int x_, y_;
     void input();
     Axis(int x__, int y__) {

@@ -4,12 +4,11 @@
 #include "Axis.h"
 
 class Robot {
-   private:
+   public:
     int object_;
     Axis pos_;
     bool status_;
 
-    public:
     void input();
 };
 

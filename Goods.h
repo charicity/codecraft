@@ -3,11 +3,10 @@
 
 #include "Axis.h"
 class Goods {
-   private:
+   public:
     Axis pos_{0, 0};
     int value_{0};
 
-   public:
     void input();
 };
 #endif
