@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-void Grid::input() {
+void Grid::init() {
     char c;
     do {
         std::cin >> c;
@@ -31,14 +31,6 @@ void Grid::input() {
         default: {
             std::cerr << "ERROR WHEN GETTING GRID" << std::endl;
             break;
-        }
-    }
-}
-
-void init_Grid() {
-    for (int i = 0; i < kMAX_GRID; ++i) {
-        for (int j = 0; j < kMAX_GRID; ++j) {
-            grid[i][j].input();
         }
     }
 }

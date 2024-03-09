@@ -1,5 +1,6 @@
 #ifndef GOODS_H
 #define GOODS_H
+
 #include <set>
 
 #include "Axis.h"
