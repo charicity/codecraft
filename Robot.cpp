@@ -8,11 +8,11 @@
 #include <queue>
 #include <utility>
 #include <vector>
-
 #include "Axis.h"
 #include "Grid.h"
 #include "Park.h"
 #include "global.h"
+
 void Robot::input() {
     std::cin >> object_;
     // std::cerr << object_ << " ";
@@ -44,8 +44,8 @@ double getw(int dis1, int dis2, int val) { return (double)val / (dis1 + dis2); }
 // 得到机器人到park[id]的最短路径的长度
 int Robot::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
 
-// robot到哪里取货
-Axis Robot::get_dir() {
+// robot到哪里取货,以及要的货物的位置
+std::pair<Axis,Axis> Robot::get_dir() {
     // 机器人扛着物品,则向最近的泊位走
     if (object_ == 1) {
         int id = 0;
@@ -55,13 +55,13 @@ Axis Robot::get_dir() {
         auto path = get_path(id);
         // 如果无路可走则原地不动
         if (path.size() == 0)
-            return {0, 0};
+            return { {0, 0},{-1,-1} };
         else {
             int sz = path.size();
             assert(sz >= 2);
             int dx = path[sz - 2].x_ - path[sz - 1].x_,
                 dy = path[sz - 2].y_ - path[sz - 1].y_;
-            return {dx, dy};
+            return { {dx, dy} , {-1,-1} };
         }
     }
 
@@ -113,7 +113,7 @@ Axis Robot::get_dir() {
     }
 
     // 没得走
-    if (maxw == 0) return {0, 0};
+    if (maxw == 0) return { {0, 0} , {-1,-1} };
 
     // 计算机器人到货物的路径（一定存在路径）
     assert(dis[maxgood.pos_.x_][maxgood.pos_.y_] != INT_MAX / 2);
@@ -122,5 +122,5 @@ Axis Robot::get_dir() {
         x = pre[x][y].x_;
         y = pre[x][y].y_;
     }
-    return {x - pos_.x_, y - pos_.y_};
+    return { {x - pos_.x_, y - pos_.y_} , maxgood.pos_ };
 }

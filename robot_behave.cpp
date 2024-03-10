@@ -1,52 +1,83 @@
 #include <algorithm>
 #include <climits>
 #include <iostream>
+#include <random>
 
+#include "Axis.h"
 #include "Frame.h"
 #include "Robot.h"
 #include "global.h"
-#include "Axis.h"
-// 机器人选择物品与泊位的估值函数
-double getw(Robot& robot, Goods& goods, Park& park) {
-    int val = goods.value_;
-    int dis = get_distance(robot.pos_, goods.pos_) + get_distance(goods.pos_, park.pos_);
-    if (dis == 0) return INT_MAX / 2;
-    return val / (double)dis;
-}
-// 返回十个机器人的行动方向返回长度为10的{dx,dy}数组dx[4]={-1,0,0,1},dy[4]={0,-1,1,0};
-std::vector<Axis> get_robot_behave(Frame& current) {
-    // 第i个机器人
+
+// 10个机器人的行走策略以及捡起和放下货物的动作
+void robots_behave(Frame& current) {
+    //预计最优方向
     std::vector<Axis> dir(kMAX_ROBOT, Axis(0, 0));
-    for (int i = 0; i < kMAX_ROBOT; i++) {  // 10
-        Robot& robot = current.robot[i];
-        // 如果robot已经扛着物品，则直接找最近的泊位
-        if (robot.object_ == 1) {
-            int id = 0;
-            for (int j = 0; j < kMAX_PARK; j++) {  // 10
-                if (robot.get_dis(j) < robot.get_dis(id)) id = j;
-            }
-            auto path=robot.get_path(id);
-            //如果无路可走则原地不动
-            if (path.size() == 0) dir[i] = {0, 0};
-            else { 
-                int dx = path[1].x_ - path[0].x_, dy = path[1].y_ - path[0].y_;
-                dir[i] = {dx, dy};
-            }
-        } else {  // 没有扛着物品则先枚举物品再找最近的泊位
-            double maxw = 0;
-            Goods select_goods;
-            int select_id;
-            for (auto goods : allGoods) {  // 枚举货物 150 
-                for (int id = 0; id < kMAX_PARK; id++) {  // 10
-                    double w = getw(robot, goods, park[id]);
-                    if(w>maxw){
-                        maxw = w;
-                
-                    }
-                }
+    //实际方向
+    std::vector<Axis> cur_dir(kMAX_ROBOT, Axis(0, 0));
+    //要找的货物的位置
+    std::vector<Axis> maxgood_pos(kMAX_ROBOT, Axis(0, 0));
+
+    for (int i = 0; i < kMAX_ROBOT; i++) {
+        auto t = current.robot[i].get_dir();
+        dir[i] = t.first;
+        maxgood_pos[i] = t.second;
+    }
+    int dx[5] = {-1, 0, 0, 1, 0}, dy[5] = {0, -1, 1, 0, 0};
+    for (int i = 0; i < kMAX_ROBOT; i++) {
+
+        // 他的位置是否被占领
+        bool isbe_jump = 0;
+        for (int j = 0; j < i; j++) {
+            // 别人跳到他的位置则他只能选择跳走
+            if (current.robot[i].pos_ == current.robot[j].pos_ + cur_dir[i]) {
+                isbe_jump = 1;
             }
         }
-    }
+        // 如果他的位置被别人占领，则他随机一个方向走
+        int ran_num = random();
+        if (isbe_jump) {
+            cur_dir[i] = Axis(dx[ran_num] % 4, dy[ran_num] % 4);
+            continue;
+        }
 
-    return dir;
+        // 没有跳到别人去的地方
+        bool jump_to_other = 0;
+        for (int j = 0; j < i; j++) {
+            if (current.robot[i].pos_ + dir[i] ==
+                current.robot[j].pos_ + cur_dir[j]) {
+                jump_to_other = 1;
+            }
+        }
+        // 如果跳过去的地方没有人，则直接跳过去
+        if (!jump_to_other) {
+            cur_dir[i] = dir[i];
+        } else  // 随机一个方向
+        {
+            cur_dir[i] = Axis(dx[ran_num] % 5, dy[ran_num] % 5);
+        }
+    }
+    
+    //机器人的行走，如果state为0表示恢复，则不能行走
+    for (int i = 0; i < kMAX_ROBOT; i++) {
+        //不能行走
+        if (!current.robot[i].status_ == 0) continue;
+
+        if (cur_dir[i] == Axis(0, 0))
+            continue;
+        else if (cur_dir[i] == Axis(0, 1)) {
+            current.robot[i].move(Robot::RIGHT);
+        } else if (cur_dir[i] == Axis(0, -1)) {
+            current.robot[i].move(Robot::LEFT);
+        } else if (cur_dir[i] == Axis(1, 0)) {
+            current.robot[i].move(Robot::UP);
+        } else {
+            current.robot[i].move(Robot::DOWN);
+        }
+
+        //运动完的位置
+        int x = current.robot[i].pos_.x_, y = current.robot[i].pos_.y_;
+        if(current.robot[i].object_==0 && maxgood_pos[i]==Axis(x,y) ){
+            current.robot[i].pick();
+        }
+    }
 }

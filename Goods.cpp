@@ -1,6 +1,6 @@
 #include "Goods.h"
 
-std::set<Goods> allGoods;
+std::set<Goods&> allGoods;
 
 #include <iostream>
 

@@ -10,7 +10,7 @@ const int kMAX_GRID = 200;
 
 class Grid {
    public:
-    std::set<Goods> stacks_;
+    std::set<Goods&> stacks_;
     int state_;
 
     static const int empty = 0, ocean = 1, barrier = 2, robot = 3, park = 4;
