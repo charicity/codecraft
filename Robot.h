@@ -6,6 +6,7 @@
 #include <cstring>
 #include <iostream>
 #include <queue>
+#include <utility>
 #include <vector>
 
 #include "Axis.h"
@@ -17,10 +18,13 @@ class Robot {
     bool status_;  // 机器人状态 （0恢复中，1正常）
     Goods carrying;
     Axis pos_;
-
+    int direction;
     void input();
-    // 返回{dx,dy}表示他的行走方向
-    Axis get_dir();
+    // 返回{dx,dy}表示他的最优行走方向以及要找的货物的位置
+    std::pair<Axis, Axis> get_dir();
+    void move(int state);
+    void pick();
+    void pull();
     // 返回机器人到id号泊位的最短路径,如果v.size()等于0则没路径
     std::vector<Axis> get_path(int id);
     // 返回机器人到id号泊位的最短距离长度
