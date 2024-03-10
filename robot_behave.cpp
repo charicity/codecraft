@@ -76,7 +76,7 @@ void robots_behave(Frame& current) {
         // 运动完的位置
         int x = current.robot[i].pos_.x_, y = current.robot[i].pos_.y_;
         if (current.robot[i].object_ == 0 && maxgood_pos[i] == Axis(x, y)) {
-            current.robot[i].pick();
+            current.robot[i].pickUp();
         }
     }
 }

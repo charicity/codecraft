@@ -26,7 +26,7 @@ void ControlLogic::init_input() {
 }
 
 // 初始化处理
-void init_initialize() {
+void ControlLogic::init_initialize() {
     for (int i = 0; i < kMAX_PARK; ++i) {
         park[i].preprocess_bfs();
     }
@@ -35,7 +35,7 @@ void init_initialize() {
 }
 
 // 输入一帧
-bool frame_input(Frame &current) {
+bool ControlLogic::frame_input(Frame &current) {
     bool f = current.input();
     if (f == false) return false;
     std::string s;
@@ -43,10 +43,10 @@ bool frame_input(Frame &current) {
     return true;
 }
 
-void frame_process(Frame &current) {}
+void ControlLogic::frame_process(Frame &current) {}
 
 // 对那一帧进行操作
-void frame_output(Frame &current) {
+void ControlLogic::frame_output(Frame &current) {
     std::cout << "OK" << std::endl;
     std::cout.flush();
 }

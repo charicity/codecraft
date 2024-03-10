@@ -6,7 +6,6 @@
 #include "Grid.h"
 #include "Park.h"
 #include "Ship.h"
-#include "global.h"
 #include "iostream"
 
 class ControlLogic {

@@ -11,6 +11,7 @@ const int kMAX_GRID = 200;
 class Grid {
    public:
     bool haveGood = false;
+    Goods goodHere;
     int state_;
 
     static const int empty = 0, ocean = 1, barrier = 2, robot = 3, park = 4;

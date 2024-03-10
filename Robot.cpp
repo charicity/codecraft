@@ -15,15 +15,18 @@
 #include "global.h"
 
 // 捡起当前位置的货物
-void Robot::pickUp(Goods &tobePicked) {
-    if (pos_ != tobePicked.pos_) {
+void Robot::pickUp() {
+    if (grid[pos_.x_][pos_.y_].haveGood == false) {
         std::cerr << "in Robot::pickUp() -> there is no Goods!" << std::endl;
         return;
     }
-    grid[pos_.x_][pos_.y_].haveGood = 0;  // 用作debug
+    Goods tobePicked = grid[pos_.x_][pos_.y_].goodHere;
+    grid[pos_.x_][pos_.y_].haveGood = false;
     carrying = tobePicked;
     unpickedGoods.erase(tobePicked);  // 这个最后执行，因为传进来的是一个引用
 }
+
+void Robot::move(int state) {}
 
 void Robot::placeDown() {
     if (!object_) {
