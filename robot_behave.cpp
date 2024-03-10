@@ -10,6 +10,7 @@
 
 // 10个机器人的行走策略以及捡起和放下货物的动作
 void robots_behave(Frame& current) {
+    // return;
     // 预计最优方向
     std::vector<Axis> dir(kMAX_ROBOT, Axis(0, 0));
     // 实际方向
@@ -19,9 +20,12 @@ void robots_behave(Frame& current) {
 
     for (int i = 0; i < kMAX_ROBOT; i++) {
         auto t = current.robot[i].get_dir();
+        // std::pair<Axis, Axis> t = {dir[0], dir[0]};
         dir[i] = t.first;
+        // cur_dir[i] = dir[i];
         maxgood_pos[i] = t.second;
     }
+
     int dx[5] = {-1, 0, 0, 1, 0}, dy[5] = {0, -1, 1, 0, 0};
     for (int i = 0; i < kMAX_ROBOT; i++) {
         // 他的位置是否被占领
@@ -36,6 +40,10 @@ void robots_behave(Frame& current) {
         int ran_num = random();
         if (isbe_jump) {
             cur_dir[i] = Axis(dx[ran_num] % 4, dy[ran_num] % 4);
+            Axis tmp = current.robot[i].pos_ + cur_dir[i];
+            if (tmp.x_ < 0 || tmp.x_ >= kMAX_GRID || tmp.y_ < 0 ||
+                tmp.y_ >= kMAX_GRID)
+                cur_dir[i] = Axis(0, 0);
             continue;
         }
 
@@ -53,6 +61,10 @@ void robots_behave(Frame& current) {
         } else  // 随机一个方向
         {
             cur_dir[i] = Axis(dx[ran_num] % 5, dy[ran_num] % 5);
+            Axis tmp = current.robot[i].pos_ + cur_dir[i];
+            if (tmp.x_ < 0 || tmp.x_ >= kMAX_GRID || tmp.y_ < 0 ||
+                tmp.y_ >= kMAX_GRID)
+                cur_dir[i] = Axis(0, 0);
         }
     }
 
@@ -72,16 +84,16 @@ void robots_behave(Frame& current) {
         } else {
             current.robot[i].move(Robot::DOWN);
         }
-
         // 运动完的位置
         int x = current.robot[i].pos_.x_, y = current.robot[i].pos_.y_;
         if (current.robot[i].object_ == 0 && maxgood_pos[i] == Axis(x, y)) {
             current.robot[i].pickUp();
         }
     }
-
-    for (auto& i : cur_dir) {
-        std::cerr << i.x_ << " " << i.y_ << "|";
-    }
-    std::cerr << std::endl;
 }
+
+// for (auto& i : cur_dir) {
+//     // std::cerr << i.x_ << " " << i.y_ << "|";
+// }
+// std::cerr << std::endl;
+// }

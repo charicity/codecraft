@@ -55,7 +55,9 @@ void ControlLogic::frame_process(Frame &current) {
     // 处理过期问题
     goods_expire(current.code_);
     // 先进行机器人的操作
+    std::cerr << "in" << std::endl;
     robots_behave(current);
+    std::cerr << "out" << std::endl;
     // 再执行船的操作
     ships_behave(current);
 }
@@ -69,6 +71,6 @@ void ControlLogic::frame_output(Frame &current) {
         action_sequence.pop();
     }
     std::cout << "OK" << std::endl;
-    // std::cerr << "OK" << std::endl;
+    std::cerr << "OK" << std::endl;
     std::cout.flush();
 }

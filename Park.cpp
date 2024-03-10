@@ -12,6 +12,7 @@ void Park::init() {
     Axis tmp;
     pos_.input();
     std::cin >> time_ >> velocity_;
+    std::cerr << time_ << std::endl;
 }
 
 void Park::put(const Goods& tobePut) { goods_queue_.push(tobePut); }
@@ -20,6 +21,7 @@ void Park::load(Ship& current_ship) {
     int tmp = velocity_;
     while (tmp && !goods_queue_.empty() && current_ship.remain_capacity_) {
         current_ship.remain_capacity_--;
+        tmp--;
         goods_queue_.pop();
     }
 }

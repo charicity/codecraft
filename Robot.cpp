@@ -115,6 +115,7 @@ int Robot::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
 std::pair<Axis, Axis> Robot::get_dir() {
     // 机器人扛着物品,则向最近的泊位走
     if (object_ == 1) {
+        return {{0, 0}, {0, 0}};
         int id = 0;
         for (int j = 0; j < kMAX_PARK; j++) {  // 10
             if (get_dis(j) < get_dis(id)) id = j;
@@ -122,13 +123,14 @@ std::pair<Axis, Axis> Robot::get_dir() {
         auto path = get_path(id);
         // 如果无路可走则原地不动
         if (path.size() == 0)
-            return {{0, 0}, {-1, -1}};
+            return {{0, 0}, {0, 0}};
         else {
             int sz = path.size();
             assert(sz >= 2);
+            // return {{0, 0}, {0, 0}};
             int dx = path[sz - 2].x_ - path[sz - 1].x_,
                 dy = path[sz - 2].y_ - path[sz - 1].y_;
-            return {{dx, dy}, {-1, -1}};
+            return {{dx, dy}, {0, 0}};
         }
     }
 
@@ -136,7 +138,7 @@ std::pair<Axis, Axis> Robot::get_dir() {
     std::vector<std::vector<int>> dis(kMAX_GRID,
                                       std::vector<int>(kMAX_GRID, INT_MAX / 2));
     std::vector<std::vector<Axis>> pre(
-        kMAX_GRID, std::vector<Axis>(kMAX_GRID, Axis(-1, -1)));
+        kMAX_GRID, std::vector<Axis>(kMAX_GRID, Axis(0, 0)));
     int x = pos_.x_, y = pos_.y_;
     dis[x][y] = 0;
     std::queue<Axis> q;
@@ -157,9 +159,10 @@ std::pair<Axis, Axis> Robot::get_dir() {
             pre[x][y] = {u.x_, u.y_};
         }
     }
+    // return {{0, 0}, {0, 0}};
 
     // 枚举货物和泊位算最优权值解
-    double maxw = 0;
+    double maxw = -100;
     Goods maxgood;
     int parkid = 0;
     for (auto goods : unpickedGoods) {
@@ -180,7 +183,7 @@ std::pair<Axis, Axis> Robot::get_dir() {
     }
 
     // 没得走
-    if (maxw == 0) return {{0, 0}, {-1, -1}};
+    if (maxw < 0) return {{0, 0}, {0, 0}};
 
     // 计算机器人到货物的路径（一定存在路径）
     assert(dis[maxgood.pos_.x_][maxgood.pos_.y_] != INT_MAX / 2);

@@ -31,5 +31,11 @@ bool Frame::input() {
         }
     }
 
+    // for (int i = 0; i < kMAX_SHIP; ++i) {
+    //     std::cerr << "parkid=" << ship[i].parkid_
+    //               << "| status=" << ship[i].status_ << std::endl;
+    //     ;
+    // }
+
     return true;
 }
