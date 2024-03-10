@@ -179,4 +179,5 @@ std::pair<Axis, Axis> Robot::get_dir() {
         y = pre[x][y].y_;
     }
     return {{x - pos_.x_, y - pos_.y_}, maxgood.pos_};
+    
 }
