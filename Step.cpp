@@ -46,8 +46,12 @@ bool ControlLogic::frame_input(Frame &current) {
 }
 
 void ControlLogic::frame_process(Frame &current) {
+    // 处理过期问题
+    goods_expire(current.code_);
     // 先进行机器人的操作
+    robots_behave(current);
     // 再执行船的操作
+    ships_behave(current);
 }
 
 // 对那一帧进行操作
@@ -55,7 +59,7 @@ void ControlLogic::frame_output(Frame &current) {
     while (!action_sequence.empty()) {
         auto &s = action_sequence.front();
         std::cout << s << std::endl;
-        std::cerr << s << std::endl;
+        // std::cerr << s << std::endl;
         action_sequence.pop();
     }
     std::cout << "OK" << std::endl;

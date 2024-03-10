@@ -5,12 +5,18 @@
 #include <set>
 
 #include "Axis.h"
+#include "Frame.h"
 #include "Goods.h"
 #include "Grid.h"
 #include "Park.h"
 
 extern std::queue<std::string> action_sequence;
+
 extern int get_distance(Axis a, Axis b);
+extern void goods_expire(int current_frame);
+extern void ships_behave(Frame& current);
+
+extern void robots_behave(Frame& current);
 
 extern std::set<Goods> unpickedGoods;  // 所有的没有被拿起过且存在的货物
 extern std::set<Goods> safeGoods;  // 所有被拿起过的且还在场上（没被运走）的货物
