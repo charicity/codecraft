@@ -2,14 +2,15 @@
 #include <climits>
 #include <iostream>
 
+#include "Axis.h"
 #include "Frame.h"
 #include "Robot.h"
 #include "global.h"
-#include "Axis.h"
 // 机器人选择物品与泊位的估值函数
 double getw(Robot& robot, Goods& goods, Park& park) {
     int val = goods.value_;
-    int dis = get_distance(robot.pos_, goods.pos_) + get_distance(goods.pos_, park.pos_);
+    int dis = get_distance(robot.pos_, goods.pos_) +
+              get_distance(goods.pos_, park.pos_);
     if (dis == 0) return INT_MAX / 2;
     return val / (double)dis;
 }
@@ -25,10 +26,11 @@ std::vector<Axis> get_robot_behave(Frame& current) {
             for (int j = 0; j < kMAX_PARK; j++) {  // 10
                 if (robot.get_dis(j) < robot.get_dis(id)) id = j;
             }
-            auto path=robot.get_path(id);
-            //如果无路可走则原地不动
-            if (path.size() == 0) dir[i] = {0, 0};
-            else { 
+            auto path = robot.get_path(id);
+            // 如果无路可走则原地不动
+            if (path.size() == 0)
+                dir[i] = {0, 0};
+            else {
                 int dx = path[1].x_ - path[0].x_, dy = path[1].y_ - path[0].y_;
                 dir[i] = {dx, dy};
             }
@@ -36,12 +38,11 @@ std::vector<Axis> get_robot_behave(Frame& current) {
             double maxw = 0;
             Goods select_goods;
             int select_id;
-            for (auto goods : allGoods) {  // 枚举货物 150 
+            for (auto goods : unpickedGoods) {            // 枚举货物 150
                 for (int id = 0; id < kMAX_PARK; id++) {  // 10
                     double w = getw(robot, goods, park[id]);
-                    if(w>maxw){
+                    if (w > maxw) {
                         maxw = w;
-                
                     }
                 }
             }

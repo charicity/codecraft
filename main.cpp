@@ -18,6 +18,7 @@ int main() {
         if (step.frame_input(current) == false) {
             return 0;
         }
-        step.frame_output();
+        step.frame_process(current);
+        step.frame_output(current);
     }
 }

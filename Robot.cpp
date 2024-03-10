@@ -13,13 +13,38 @@
 #include "Grid.h"
 #include "Park.h"
 #include "global.h"
+
+// 捡起当前位置的货物
+void Robot::pickUp(Goods &tobePicked) {
+    if (pos_ != tobePicked.pos_) {
+        std::cerr << "in Robot::pickUp() -> there is no Goods!" << std::endl;
+        return;
+    }
+    grid[pos_.x_][pos_.y_].haveGood = 0;  // 用作debug
+    carrying = tobePicked;
+    unpickedGoods.erase(tobePicked);  // 这个最后执行，因为传进来的是一个引用
+}
+
+void Robot::placeDown() {
+    if (!object_) {
+        std::cerr << "in Robot::placeDown() -> Not carrying goods!"
+                  << std::endl;
+        return;
+    }
+    for (int i = 0; i < kMAX_PARK; ++i) {
+        if (park[i].pos_ == pos_) {
+            carrying.pos_ = pos_;  // 用作debug
+            park[i].goods_queue_.push(carrying);
+            return;
+        }
+    }
+    std::cerr << "in Robot::placeDown() -> there is no Park!" << std::endl;
+}
+
 void Robot::input() {
     std::cin >> object_;
-    // std::cerr << object_ << " ";
     pos_.input();
     std::cin >> status_;
-    // std::cerr << status_ << " ";
-    // std::cerr << std::endl;
 }
 
 // 得到从机器人到park[id]的最短路径
@@ -95,7 +120,7 @@ Axis Robot::get_dir() {
     double maxw = 0;
     Goods maxgood;
     int parkid = 0;
-    for (auto goods : allGoods) {
+    for (auto goods : unpickedGoods) {
         // 机器人到货物的距离
         int dis1 = dis[goods.pos_.x_][goods.pos_.y_];
         if (dis1 == INT_MAX / 2) continue;

@@ -1,15 +1,29 @@
 #include "Goods.h"
 
-std::set<Goods> allGoods;
+#include <set>
+
+std::set<Goods> unpickedGoods;  // 所有的没有被拿起过且存在的货物
+std::set<Goods> safeGoods;  // 所有被拿起过的且还在场上（没被运走）的货物
 
 #include <iostream>
 
 #include "Park.h"
 #include "global.h"
 
-void Goods::input() {
+void goods_expire(int current_frame) {  // 处理过期货物
+    while (!unpickedGoods.empty() &&
+           unpickedGoods.begin()->happened_frame_ + Goods::EXPIRE_FRAME >
+               current_frame) {
+        unpickedGoods.erase(unpickedGoods.begin());
+    }
+}
+
+void Goods::input(int current_frame) {
     pos_.input();
     std::cin >> value_;
+    happened_frame_ = current_frame;
+    static int cnt = 0;
+    code_ = ++cnt;
 }
 
 // 得到从该货物到park[id]的最短路径
@@ -29,3 +43,11 @@ std::vector<Axis> Goods::get_path(int id) {
 }
 // 得到从该货物到park[id]的最短路径的长度
 int Goods::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
+
+void Goods::showoff() {
+    unpickedGoods.insert(*this);
+    if (grid[pos_.x_][pos_.y_].haveGood == true) {
+        std::cerr << "in showoff(): Error-STACKED" << std::endl;
+    }
+    grid[pos_.x_][pos_.y_].haveGood = true;
+}
