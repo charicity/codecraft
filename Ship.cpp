@@ -18,8 +18,14 @@ void Ship::init() { std::cin >> Ship::capacity_; }
 
 void Ship::go(int id) {
     if (id == -1) {
-        action_sequence.push("go " + ('0' + id_));
+        std::string s = "go ";
+        s += (char)('0' + id_);
+        action_sequence.push(s);
     } else {
-        action_sequence.push("ship " + ('0' + id_) + ' ' + ('0' + id));
+        std::string s = "ship ";
+        s += (char)('0' + id_);
+        s += (char)(' ');
+        s += (char)('0' + id);
+        action_sequence.push(s);
     }
 }

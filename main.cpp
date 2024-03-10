@@ -14,9 +14,9 @@ int main() {
     ControlLogic step;
     step.init_input();
     step.init_initialize();
-    Frame current;
 
     while (true) {
+        Frame current;
         if (step.frame_input(current) == false) {
             return 0;
         }

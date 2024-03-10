@@ -59,7 +59,7 @@ void robots_behave(Frame& current) {
     // 机器人的行走，如果state为0表示恢复，则不能行走
     for (int i = 0; i < kMAX_ROBOT; i++) {
         // 不能行走
-        if (!current.robot[i].status_ == 0) continue;
+        if (current.robot[i].status_ == 0) continue;
 
         if (cur_dir[i] == Axis(0, 0))
             continue;
@@ -79,4 +79,9 @@ void robots_behave(Frame& current) {
             current.robot[i].pickUp();
         }
     }
+
+    for (auto& i : cur_dir) {
+        std::cerr << i.x_ << " " << i.y_ << "|";
+    }
+    std::cerr << std::endl;
 }

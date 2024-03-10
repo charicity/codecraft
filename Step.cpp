@@ -40,12 +40,18 @@ void ControlLogic::init_initialize() {
 bool ControlLogic::frame_input(Frame &current) {
     bool f = current.input();
     if (f == false) return false;
+
+    for (auto &i : current.goodInfo) {
+        i.showoff();
+    }
+
     std::string s;
     std::cin >> s;
     return true;
 }
 
 void ControlLogic::frame_process(Frame &current) {
+    std::cerr << "processing frame #" << current.code_ << std::endl;
     // 处理过期问题
     goods_expire(current.code_);
     // 先进行机器人的操作
@@ -59,9 +65,10 @@ void ControlLogic::frame_output(Frame &current) {
     while (!action_sequence.empty()) {
         auto &s = action_sequence.front();
         std::cout << s << std::endl;
-        // std::cerr << s << std::endl;
+        std::cerr << s << std::endl;
         action_sequence.pop();
     }
     std::cout << "OK" << std::endl;
+    // std::cerr << "OK" << std::endl;
     std::cout.flush();
 }

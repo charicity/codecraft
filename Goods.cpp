@@ -36,6 +36,9 @@ std::vector<Axis> Goods::get_path(int id) {
 int Goods::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
 
 void Goods::showoff() {
+    // std::cerr << "Goods #" << code_ << " will show in (" << pos_.x_ << ","
+    //           << pos_.y_ << ")" << std::endl;
+    // std::cerr << std::cin.eof() << " " << std::cin.fail() << std::endl;
     if (grid[pos_.x_][pos_.y_].haveGood == true) {
         std::cerr << "in showoff(): Error-STACKED" << std::endl;
         return;

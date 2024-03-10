@@ -25,7 +25,9 @@ void Robot::pickUp() {
     grid[pos_.x_][pos_.y_].remove();
 
     carrying = tobePicked;
-    action_sequence.push("get " + ('0' + id_));
+    std::string s = "get ";
+    s += (char)('0' + id_);
+    action_sequence.push(s);
     unpickedGoods.erase(tobePicked);
 }
 
@@ -52,7 +54,12 @@ void Robot::move(int state) {
             return;
         }
     }
-    action_sequence.push("move " + ('0' + id_) + ' ' + ('0' + state));
+    std::string s = "move ";
+    s += ('0' + id_);
+    s += ' ';
+    s += ('0' + state);
+
+    action_sequence.push(s);
 }
 
 void Robot::placeDown() {
@@ -65,16 +72,20 @@ void Robot::placeDown() {
         if (park[i].pos_ == pos_) {
             carrying.pos_ = pos_;  // 用作debug
             park[i].put(carrying);
-            action_sequence.push("pull");
+
+            std::string s1 = "pull ";
+            s1 += (char)('0' + id_);
+            action_sequence.push(s1);
             return;
         }
     }
     std::cerr << "in Robot::placeDown() -> there is no Park!" << std::endl;
 }
 
-void Robot::input() {
+void Robot::input(int id) {
     std::cin >> object_;
     pos_.input();
+    id_ = id;
     std::cin >> status_;
 }
 
@@ -179,5 +190,4 @@ std::pair<Axis, Axis> Robot::get_dir() {
         y = pre[x][y].y_;
     }
     return {{x - pos_.x_, y - pos_.y_}, maxgood.pos_};
-    
 }

@@ -10,7 +10,7 @@ const int kMAX_GRID = 200;
 
 class Grid {
    public:
-    Grid() : goodHere() {}
+    Grid() : goodHere() { haveGood = false; }
     bool haveGood = false;
     Goods goodHere;
     int state_;

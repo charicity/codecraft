@@ -15,7 +15,7 @@ bool Frame::input() {
     }
 
     for (int i = 0; i < kMAX_ROBOT; ++i) {
-        robot[i].input();
+        robot[i].input(i);
     }
 
     for (int i = 0; i < kMAX_SHIP; ++i) {
