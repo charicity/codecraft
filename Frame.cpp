@@ -10,7 +10,7 @@ bool Frame::input() {
     std::cin >> currentMoney_ >> newGoodsCount_;
     for (int i = 0; i < newGoodsCount_; ++i) {
         Goods tmp;
-        tmp.input();
+        tmp.input(code_);
         goodInfo.push_back(tmp);
     }
 

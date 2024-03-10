@@ -1,6 +1,7 @@
 #ifndef GOODS_H
 #define GOODS_H
 
+#include <queue>
 #include <set>
 #include <vector>
 
@@ -16,6 +17,7 @@ class Goods {
     int value_{0};  // 本货物的价值
     bool state;     // 表示当前货物是否被某个机器人锁定
     void input(int current_frame);  // 输入这个货物，自动标号
+
     // 返回货物到id号泊位的最短路径,如果v.size()等于0则没路径
     std::vector<Axis> get_path(int id);
     // 返回货物到id号泊位的最短距离长度

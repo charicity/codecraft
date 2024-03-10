@@ -1,14 +1,13 @@
 #include "Goods.h"
 
-#include <set>
-
-std::set<Goods> unpickedGoods;  // 所有的没有被拿起过且存在的货物
-std::set<Goods> safeGoods;  // 所有被拿起过的且还在场上（没被运走）的货物
-
 #include <iostream>
+#include <set>
 
 #include "Park.h"
 #include "global.h"
+
+std::set<Goods> unpickedGoods;  // 所有的没有被拿起过且存在的货物
+std::set<Goods> safeGoods;  // 所有被拿起过的且还在场上（没被运走）的货物
 
 void goods_expire(int current_frame) {  // 处理过期货物
     while (!unpickedGoods.empty() &&

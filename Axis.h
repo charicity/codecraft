@@ -22,9 +22,6 @@ class Axis {
         Axis res(x_ - offset.x_, y_ - offset.y_);
         return res;
     }
-    bool operator==(Axis offset) const {
-        return x_ == offset.x_ && y_ == offset.y_;
-    }
     bool operator!=(Axis offset) const {
         return x_ != offset.x_ || y_ != offset.y_;
     }

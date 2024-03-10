@@ -15,13 +15,6 @@ class Park {
         time_ = 0;
         velocity_ = 0;
     }
-    Park(Axis pos, int time = 0, int velocity = 0) {
-        pos_ = pos;
-        time_ = time;
-        velocity_ = velocity;
-        while (!goods_queue_.empty()) goods_queue_.pop();
-        while (!ships_queue_.empty()) ships_queue_.pop();
-    }
     Axis pos_;
     std::queue<Goods> goods_queue_;
     std::queue<Ship> ships_queue_;

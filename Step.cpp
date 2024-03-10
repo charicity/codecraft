@@ -1,10 +1,9 @@
 #include "Step.h"
 
+#include <cstring>
 #include <queue>
-#include <string>
 
 #include "global.h"
-std::queue<std::string> action_sequene;
 
 void ControlLogic::init_input() {
     for (int i = 0; i < kMAX_GRID; ++i) {
