@@ -1,8 +1,10 @@
 #include <bits/stdc++.h>
 
 #include "Frame.h"
+#include "Goods.h"
 #include "Grid.h"
 #include "Step.h"
+#include "global.h"
 
 int main() {
     // std::ios::sync_with_stdio(0);

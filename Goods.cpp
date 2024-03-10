@@ -11,8 +11,7 @@ std::set<Goods> safeGoods;  // 所有被拿起过的且还在场上（没被运�
 
 void goods_expire(int current_frame) {  // 处理过期货物
     while (!unpickedGoods.empty() &&
-           unpickedGoods.begin()->happened_frame_ + Goods::EXPIRE_FRAME >
-               current_frame) {
+           unpickedGoods.begin()->happened_frame_ + 1000 > current_frame) {
         unpickedGoods.erase(unpickedGoods.begin());
     }
 }

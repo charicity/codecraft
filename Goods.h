@@ -8,11 +8,12 @@
 #include "Axis.h"
 #include "global.h"
 
+extern void goods_expire(int current_frame);
+
 class Goods {
    public:
-    static const int EXPIRE_FRAME = 1000;  // 多少帧之后消失
-    int code_;                             // 独一无二的编号
-    int happened_frame_;                   // 出现的帧
+    int code_;            // 独一无二的编号
+    int happened_frame_;  // 出现的帧
     Axis pos_{0, 0};  // 货物的坐标，被捡起之后的货物不维护这个值
     int value_{0};  // 本货物的价值
     bool state;     // 表示当前货物是否被某个机器人锁定
@@ -23,7 +24,7 @@ class Goods {
     // 返回货物到id号泊位的最短距离长度
     int get_dis(int id);
 
-    bool operator<(Goods a) const {
+    bool operator<(const Goods& a) const {
         if (happened_frame_ != a.happened_frame_)
             return happened_frame_ < a.happened_frame_;
         return code_ < a.code_;
