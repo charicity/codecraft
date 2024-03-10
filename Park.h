@@ -27,6 +27,11 @@ class Park {
 
     void put(const Goods& tobePut);
     void load(Ship& current_ship);
+
+    bool inPark(Axis check) {
+        return pos_.x_ <= check.x_ && check.x_ <= (pos_.x_ + 3) &&
+               pos_.y_ <= check.y_ && check.y_ <= (pos_.y_ + 3);
+    }
 };
 
 #endif

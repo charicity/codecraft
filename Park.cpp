@@ -12,7 +12,7 @@ void Park::init() {
     Axis tmp;
     pos_.input();
     std::cin >> time_ >> velocity_;
-    std::cerr << time_ << std::endl;
+    // std::cerr << time_ << std::endl;
 }
 
 void Park::put(const Goods& tobePut) { goods_queue_.push(tobePut); }

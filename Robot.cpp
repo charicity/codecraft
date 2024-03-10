@@ -69,9 +69,10 @@ void Robot::placeDown() {
         return;
     }
     for (int i = 0; i < kMAX_PARK; ++i) {
-        if (park[i].pos_ == pos_) {
+        if (park[i].inPark(pos_)) {
             carrying.pos_ = pos_;  // 用作debug
             park[i].put(carrying);
+            object_ = 0;
 
             std::string s1 = "pull ";
             s1 += (char)('0' + id_);
@@ -96,12 +97,17 @@ std::vector<Axis> Robot::get_path(int id) {
     if (park[id].dis[curx][cury] == INT_MAX / 2) {
         return path;
     }
-    int x = park[id].pos_.x_, y = park[id].pos_.y_;
+    // std::cerr << "HH" << std::endl;
+    int x = pos_.x_, y = pos_.y_;
     path.push_back({x, y});
     while (park[id].pre[x][y] != Axis(-1, -1)) {
-        x = park[id].pre[x][y].x_, y = park[id].pre[x][y].y_;
+        int tmpx = park[id].pre[x][y].x_;
+        int tmpy = park[id].pre[x][y].y_;
+        x = tmpx;
+        y = tmpy;
         path.push_back({x, y});
     }
+    // std::cerr << path.size() << " " << std::endl;
     return path;
 }
 
@@ -115,22 +121,23 @@ int Robot::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
 std::pair<Axis, Axis> Robot::get_dir() {
     // 机器人扛着物品,则向最近的泊位走
     if (object_ == 1) {
-        return {{0, 0}, {0, 0}};
+        // return {{0, 0}, {0, 0}};
         int id = 0;
         for (int j = 0; j < kMAX_PARK; j++) {  // 10
             if (get_dis(j) < get_dis(id)) id = j;
         }
+        // std::cerr << id << std::endl;
         auto path = get_path(id);
         // 如果无路可走则原地不动
-        if (path.size() == 0)
+        if (path.size() < 2)
             return {{0, 0}, {0, 0}};
         else {
             int sz = path.size();
             assert(sz >= 2);
             // return {{0, 0}, {0, 0}};
-            int dx = path[sz - 2].x_ - path[sz - 1].x_,
-                dy = path[sz - 2].y_ - path[sz - 1].y_;
-            return {{dx, dy}, {0, 0}};
+            int dx = path[1].x_ - path[0].x_, dy = path[1].y_ - path[0].y_;
+            // std::cerr << dx << " " << dy << std::endl;
+            return {{dx, dy}, carrying.pos_};
         }
     }
 
@@ -189,8 +196,10 @@ std::pair<Axis, Axis> Robot::get_dir() {
     assert(dis[maxgood.pos_.x_][maxgood.pos_.y_] != INT_MAX / 2);
     x = maxgood.pos_.x_, y = maxgood.pos_.y_;
     while (pre[x][y] != Axis(pos_.x_, pos_.y_)) {
-        x = pre[x][y].x_;
-        y = pre[x][y].y_;
+        int tmpx = pre[x][y].x_;
+        int tmpy = pre[x][y].y_;
+        x = tmpx;
+        y = tmpy;
     }
     return {{x - pos_.x_, y - pos_.y_}, maxgood.pos_};
 }

@@ -13,6 +13,12 @@ void ControlLogic::init_input() {
             grid[i][j].init();
         }
     }
+    // for (int i = 0; i < kMAX_GRID; ++i) {
+    //     for (int j = 0; j < kMAX_GRID; ++j) {
+    //         std::cerr << grid[i][j].state_;
+    //     }
+    //     std::cerr << std::endl;
+    // }
 
     for (int i = 0; i < kMAX_PARK; ++i) {
         int id;
@@ -51,13 +57,11 @@ bool ControlLogic::frame_input(Frame &current) {
 }
 
 void ControlLogic::frame_process(Frame &current) {
-    std::cerr << "processing frame #" << current.code_ << std::endl;
+    // std::cerr << "processing frame #" << current.code_ << std::endl;
     // 处理过期问题
     goods_expire(current.code_);
     // 先进行机器人的操作
-    std::cerr << "in" << std::endl;
     robots_behave(current);
-    std::cerr << "out" << std::endl;
     // 再执行船的操作
     ships_behave(current);
 }
@@ -67,10 +71,10 @@ void ControlLogic::frame_output(Frame &current) {
     while (!action_sequence.empty()) {
         auto &s = action_sequence.front();
         std::cout << s << std::endl;
-        std::cerr << s << std::endl;
+        // std::cerr << s << std::endl;
         action_sequence.pop();
     }
     std::cout << "OK" << std::endl;
-    std::cerr << "OK" << std::endl;
+    // std::cerr << "OK" << std::endl;
     std::cout.flush();
 }

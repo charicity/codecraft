@@ -1,1 +1,1 @@
-./info/PreliminaryJudge ./main -m ./info/maps/map2.txt -l ERR
+./info/PreliminaryJudge -f 0 -s 888 ./main -m ./info/maps/map1.txt -l ASSERT
