@@ -12,8 +12,9 @@ void Park::init() {
     Axis tmp;
     pos_.input();
     std::cin >> time_ >> velocity_;
-    // std::cerr << time_ << " " << velocity_ << std::endl;
+}
 
+void Park::preprocess_bfs() {
     // 预处理出从该泊位到达每个位置的bfs路径
     std::queue<Axis> q;
     q.push(pos_);

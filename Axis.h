@@ -28,6 +28,14 @@ class Axis {
     bool operator!=(Axis offset) const {
         return x_ != offset.x_ || y_ != offset.y_;
     }
+
+    bool operator==(Axis offset) const {
+        return x_ == offset.x_ && y_ == offset.y_;
+    }
+    bool operator<(Axis a) const {
+        if (x_ != a.x_) return x_ < a.x_;
+        return y_ < a.y_;
+    }
 };
 
 #endif

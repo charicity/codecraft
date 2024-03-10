@@ -31,6 +31,8 @@ class Park {
     int dis[kMAX_GRID][kMAX_GRID];
     // 初始化泊位信息以及泊位到每个点的bfs路线
     void init();
+
+    void preprocess_bfs();
 };
 
 #endif
