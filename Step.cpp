@@ -5,6 +5,8 @@
 
 #include "global.h"
 
+std::queue<std::string> action_sequence;
+
 void ControlLogic::init_input() {
     for (int i = 0; i < kMAX_GRID; ++i) {
         for (int j = 0; j < kMAX_GRID; ++j) {
@@ -43,10 +45,19 @@ bool ControlLogic::frame_input(Frame &current) {
     return true;
 }
 
-void ControlLogic::frame_process(Frame &current) {}
+void ControlLogic::frame_process(Frame &current) {
+    // 先进行机器人的操作
+    // 再执行船的操作
+}
 
 // 对那一帧进行操作
 void ControlLogic::frame_output(Frame &current) {
+    while (!action_sequence.empty()) {
+        auto &s = action_sequence.front();
+        std::cout << s << std::endl;
+        std::cerr << s << std::endl;
+        action_sequence.pop();
+    }
     std::cout << "OK" << std::endl;
     std::cout.flush();
 }

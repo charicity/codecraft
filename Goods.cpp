@@ -9,14 +9,6 @@
 std::set<Goods> unpickedGoods;  // 所有的没有被拿起过且存在的货物
 std::set<Goods> safeGoods;  // 所有被拿起过的且还在场上（没被运走）的货物
 
-void goods_expire(int current_frame) {  // 处理过期货物
-    while (!unpickedGoods.empty() &&
-           unpickedGoods.begin()->happened_frame_ + Goods::kMAX_EXPIRE >
-               current_frame) {
-        unpickedGoods.erase(unpickedGoods.begin());
-    }
-}
-
 void Goods::input(int current_frame) {
     pos_.input();
     std::cin >> value_;
@@ -44,10 +36,11 @@ std::vector<Axis> Goods::get_path(int id) {
 int Goods::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
 
 void Goods::showoff() {
-    unpickedGoods.insert(*this);
     if (grid[pos_.x_][pos_.y_].haveGood == true) {
         std::cerr << "in showoff(): Error-STACKED" << std::endl;
+        return;
     }
-    grid[pos_.x_][pos_.y_].haveGood = true;
-    grid[pos_.x_][pos_.y_].goodHere = (*this);
+    unpickedGoods.insert(*this);
+
+    grid[pos_.x_][pos_.y_].place(*this);
 }

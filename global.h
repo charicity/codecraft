@@ -8,6 +8,8 @@
 #include "Goods.h"
 #include "Grid.h"
 #include "Park.h"
+
+extern std::queue<std::string> action_sequence;
 extern int get_distance(Axis a, Axis b);
 
 extern std::set<Goods> unpickedGoods;  // 所有的没有被拿起过且存在的货物

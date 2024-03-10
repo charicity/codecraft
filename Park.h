@@ -17,7 +17,6 @@ class Park {
     }
     Axis pos_;
     std::queue<Goods> goods_queue_;
-    std::queue<Ship> ships_queue_;
     int time_;      // 表示该泊位轮船运输到虚拟点的时间
     int velocity_;  // 每帧可以装载的物品数
     Axis pre[kMAX_GRID][kMAX_GRID];
@@ -26,6 +25,9 @@ class Park {
     void init();
 
     void preprocess_bfs();
+
+    void put(const Goods& tobePut);
+    void load(Ship& current_ship);
 };
 
 #endif

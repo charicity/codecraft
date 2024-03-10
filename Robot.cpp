@@ -20,13 +20,40 @@ void Robot::pickUp() {
         std::cerr << "in Robot::pickUp() -> there is no Goods!" << std::endl;
         return;
     }
+
     Goods tobePicked = grid[pos_.x_][pos_.y_].goodHere;
-    grid[pos_.x_][pos_.y_].haveGood = false;
+    grid[pos_.x_][pos_.y_].remove();
+
     carrying = tobePicked;
-    unpickedGoods.erase(tobePicked);  // 这个最后执行，因为传进来的是一个引用
+    action_sequence.push("get " + ('0' + id_));
+    unpickedGoods.erase(tobePicked);
 }
 
-void Robot::move(int state) {}
+void Robot::move(int state) {
+    switch (state) {
+        case Robot::LEFT: {
+            pos_.y_--;
+            break;
+        }
+        case Robot::RIGHT: {
+            pos_.y_++;
+            break;
+        }
+        case Robot::UP: {
+            pos_.x_--;
+            break;
+        }
+        case Robot::DOWN: {
+            pos_.x_++;
+            break;
+        }
+        default: {
+            std::cerr << "in Robot::move() -> error moving code" << std::endl;
+            return;
+        }
+    }
+    action_sequence.push("move " + ('0' + id_) + ' ' + ('0' + state));
+}
 
 void Robot::placeDown() {
     if (!object_) {
@@ -37,7 +64,8 @@ void Robot::placeDown() {
     for (int i = 0; i < kMAX_PARK; ++i) {
         if (park[i].pos_ == pos_) {
             carrying.pos_ = pos_;  // 用作debug
-            park[i].goods_queue_.push(carrying);
+            park[i].put(carrying);
+            action_sequence.push("pull");
             return;
         }
     }

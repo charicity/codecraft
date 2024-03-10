@@ -14,6 +14,16 @@ void Park::init() {
     std::cin >> time_ >> velocity_;
 }
 
+void Park::put(const Goods& tobePut) { goods_queue_.push(tobePut); }
+
+void Park::load(Ship& current_ship) {
+    int tmp = velocity_;
+    while (tmp && !goods_queue_.empty() && current_ship.remain_capacity_) {
+        current_ship.remain_capacity_--;
+        goods_queue_.pop();
+    }
+}
+
 void Park::preprocess_bfs() {
     // 预处理出从该泊位到达每个位置的bfs路径
     std::queue<Axis> q;

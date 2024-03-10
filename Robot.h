@@ -15,6 +15,7 @@ const int kMAX_ROBOT = 10;
 
 class Robot {
    public:
+    int id_;
     static const int RIGHT = 0, LEFT = 1, UP = 2, DOWN = 3, KEEP = 4;
     bool object_;  // 是否正在扛着物品
     bool status_;  // 机器人状态 （0恢复中，1正常）

@@ -3,6 +3,12 @@
 #include <iostream>
 Grid grid[kMAX_GRID][kMAX_GRID];
 
+void Grid::place(const Goods& tobeplace) {
+    goodHere = tobeplace;
+    haveGood = true;
+}
+void Grid::remove() { haveGood = false; }
+
 void Grid::init() {
     char c;
     do {
@@ -23,6 +29,8 @@ void Grid::init() {
         }
         case 'A': {
             state_ = Grid::robot;
+            /*特殊处理，把机器人变成空地*/
+            state_ = Grid::empty;
             break;
         }
         case 'B': {
