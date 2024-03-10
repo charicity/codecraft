@@ -6,7 +6,6 @@ const int kMAX_SHIP = 5;
 struct Ship {
    public:
     int id_;
-    int id_;
     static int capacity_;
     int remain_capacity_;
     int status_;  // 航行状态（0移动，1到站，2等待）

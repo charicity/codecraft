@@ -31,8 +31,8 @@ void ships_behave(Frame& current) {
                 ship.go(id);
             }
             // 装满了或者装了超过100个直接出发去虚拟点
-            else if (!ship.remain_capacity ||
-                     ship.capacity_ - ship.remain_capacity >= 100) {
+            else if (!ship.remain_capacity_ ||
+                     ship.capacity_ - ship.remain_capacity_ >= 100) {
                 ship.go(-1);
             }
 
