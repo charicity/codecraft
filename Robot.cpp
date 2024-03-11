@@ -2,10 +2,12 @@
 
 #include <assert.h>
 
+#include <algorithm>
 #include <climits>
 #include <cstring>
 #include <iostream>
 #include <queue>
+#include <random>
 #include <utility>
 #include <vector>
 
@@ -90,26 +92,26 @@ void Robot::input(int id) {
     std::cin >> status_;
 }
 
-// 得到从机器人到park[id]的最短路径
-std::vector<Axis> Robot::get_path(int id) {
-    int curx = pos_.x_, cury = pos_.y_;
-    std::vector<Axis> path;
-    if (park[id].dis[curx][cury] == INT_MAX / 2) {
-        return path;
-    }
-    // std::cerr << "HH" << std::endl;
-    int x = pos_.x_, y = pos_.y_;
-    path.push_back({x, y});
-    while (park[id].pre[x][y] != Axis(-1, -1)) {
-        int tmpx = park[id].pre[x][y].x_;
-        int tmpy = park[id].pre[x][y].y_;
-        x = tmpx;
-        y = tmpy;
-        path.push_back({x, y});
-    }
-    // std::cerr << path.size() << " " << std::endl;
-    return path;
-}
+// // 得到从机器人到park[id]的最短路径
+// std::vector<Axis> Robot::get_path(int id) {
+//     int curx = pos_.x_, cury = pos_.y_;
+//     std::vector<Axis> path;
+//     if (park[id].dis[curx][cury] == INT_MAX / 2) {
+//         return path;
+//     }
+//     // std::cerr << "HH" << std::endl;
+//     int x = pos_.x_, y = pos_.y_;
+//     path.push_back({x, y});
+//     while (park[id].pre[x][y] != Axis(-1, -1)) {
+//         int tmpx = park[id].pre[x][y].x_;
+//         int tmpy = park[id].pre[x][y].y_;
+//         x = tmpx;
+//         y = tmpy;
+//         path.push_back({x, y});
+//     }
+//     // std::cerr << path.size() << " " << std::endl;
+//     return path;
+// }
 
 // dis1为从机器人到货物的最短距离，dis2为从货物到泊位的最短距离 ,权值计算函数
 double getw(int dis1, int dis2, int val) { return (double)val / (dis1 + dis2); }
@@ -119,28 +121,6 @@ int Robot::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
 
 // robot到哪里取货,以及要的货物的位置
 std::pair<Axis, Axis> Robot::get_dir() {
-    // 机器人扛着物品,则向最近的泊位走
-    if (object_ == 1) {
-        // return {{0, 0}, {0, 0}};
-        int id = 0;
-        for (int j = 0; j < kMAX_PARK; j++) {  // 10
-            if (get_dis(j) < get_dis(id)) id = j;
-        }
-        // std::cerr << id << std::endl;
-        auto path = get_path(id);
-        // 如果无路可走则原地不动
-        if (path.size() < 2)
-            return {{0, 0}, {0, 0}};
-        else {
-            int sz = path.size();
-            assert(sz >= 2);
-            // return {{0, 0}, {0, 0}};
-            int dx = path[1].x_ - path[0].x_, dy = path[1].y_ - path[0].y_;
-            // std::cerr << dx << " " << dy << std::endl;
-            return {{dx, dy}, carrying.pos_};
-        }
-    }
-
     // 求出bfs矩阵
     std::vector<std::vector<int>> dis(kMAX_GRID,
                                       std::vector<int>(kMAX_GRID, INT_MAX / 2));
@@ -150,10 +130,23 @@ std::pair<Axis, Axis> Robot::get_dir() {
     dis[x][y] = 0;
     std::queue<Axis> q;
     q.push(pos_);
-    int dx[4] = {-1, 0, 0, 1}, dy[4] = {0, -1, 1, 0};
+    std::vector<Axis> dir;
+    dir.push_back({-1, 0});
+    dir.push_back({0, -1});
+    dir.push_back({0, 1});
+    dir.push_back({1, 0});
+    // std::random_device rd;
+    // std::mt19937 g(rd());
+    // 随机bfs
     while (q.size()) {
         Axis u = q.front();
         q.pop();
+        std::random_shuffle(dir.begin(), dir.end());
+        int dx[4], dy[4];
+        for (int i = 0; i < 4; i++) {
+            dx[i] = dir[i].x_;
+            dy[i] = dir[i].y_;
+        }
         for (int i = 0; i < 4; i++) {
             int x = u.x_ + dx[i], y = u.y_ + dy[i];
             if (x < 0 || y < 0 || x >= kMAX_GRID || y >= kMAX_GRID) continue;
@@ -166,6 +159,30 @@ std::pair<Axis, Axis> Robot::get_dir() {
             pre[x][y] = {u.x_, u.y_};
         }
     }
+
+    // 机器人扛着物品,则向最近的泊位走
+    if (object_ == 1) {
+        int id = 0;
+        for (int j = 1; j < kMAX_PARK; j++) {  // 10
+            if (dis[park[j].pos_.x_][park[j].pos_.y_] <
+                dis[park[id].pos_.x_][park[id].pos_.y_]) {
+                id = j;
+            }
+        }
+        if (dis[park[id].pos_.x_][park[id].pos_.y_] == INT_MAX / 2)
+            return {{0, 0}, {0, 0}};
+
+        int x = park[id].pos_.x_, y = park[id].pos_.y_;
+        while (pre[x][y] != Axis(pos_.x_, pos_.y_)) {
+            int tmpx = pre[x][y].x_;
+            int tmpy = pre[x][y].y_;
+            x = tmpx;
+            y = tmpy;
+        }
+
+        return {{x - pos_.x_, y - pos_.y_}, {0, 0}};
+    }
+
     // return {{0, 0}, {0, 0}};
 
     // 枚举货物和泊位算最优权值解

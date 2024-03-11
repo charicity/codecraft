@@ -27,25 +27,6 @@ void robots_behave(Frame& current) {
 
     int dx[5] = {-1, 0, 0, 1, 0}, dy[5] = {0, -1, 1, 0, 0};
     for (int i = 0; i < kMAX_ROBOT; i++) {
-        // 他的位置是否被占领
-        bool isbe_jump = 0;
-        for (int j = 0; j < i; j++) {
-            // 别人跳到他的位置则他只能选择跳走
-            if (current.robot[i].pos_ == current.robot[j].pos_ + cur_dir[i]) {
-                isbe_jump = 1;
-            }
-        }
-        // 如果他的位置被别人占领，则他随机一个方向走
-        int ran_num = random();
-        if (isbe_jump) {
-            cur_dir[i] = Axis(dx[ran_num % 4], dy[ran_num % 4]);
-            Axis tmp = current.robot[i].pos_ + cur_dir[i];
-            if (tmp.x_ < 0 || tmp.x_ >= kMAX_GRID || tmp.y_ < 0 ||
-                tmp.y_ >= kMAX_GRID)
-                cur_dir[i] = Axis(0, 0);
-            continue;
-        }
-
         // 没有跳到别人去的地方
         bool jump_to_other = 0;
         for (int j = 0; j < i; j++) {
@@ -55,15 +36,35 @@ void robots_behave(Frame& current) {
             }
         }
         // 如果跳过去的地方没有人，则直接跳过去
+        int ran_num = random();
         if (!jump_to_other) {
             cur_dir[i] = dir[i];
-        } else  // 随机一个方向
-        {
-            cur_dir[i] = Axis(dx[ran_num % 5], dy[ran_num % 5]);
-            Axis tmp = current.robot[i].pos_ + cur_dir[i];
-            if (tmp.x_ < 0 || tmp.x_ >= kMAX_GRID || tmp.y_ < 0 ||
-                tmp.y_ >= kMAX_GRID)
-                cur_dir[i] = Axis(0, 0);
+        } else {
+            // 他的位置是否被占领
+            bool isbe_jump = 0;
+            for (int j = 0; j < i; j++) {
+                // 别人跳到他的位置则他只能选择跳走
+                if (current.robot[i].pos_ ==
+                    current.robot[j].pos_ + cur_dir[i]) {
+                    isbe_jump = 1;
+                }
+            }
+            // 如果他的位置被别人占领，则他随机一个方向走
+            if (isbe_jump) {
+                cur_dir[i] = Axis(dx[ran_num % 4], dy[ran_num % 4]);
+                Axis tmp = current.robot[i].pos_ + cur_dir[i];
+                if (tmp.x_ < 0 || tmp.x_ >= kMAX_GRID || tmp.y_ < 0 ||
+                    tmp.y_ >= kMAX_GRID)
+                    cur_dir[i] = Axis(0, 0);
+                // continue;
+            }
+            else {
+                cur_dir[i] = Axis(dx[ran_num % 5], dy[ran_num % 5]);
+                Axis tmp = current.robot[i].pos_ + cur_dir[i];
+                if (tmp.x_ < 0 || tmp.x_ >= kMAX_GRID || tmp.y_ < 0 ||
+                    tmp.y_ >= kMAX_GRID)
+                    cur_dir[i] = Axis(0, 0);
+            }
         }
     }
 
