@@ -3,13 +3,17 @@
 #include "Park.h"
 #include "Robot.h"
 #include "global.h"
-// 船在等待时选择id号泊位的估值函数，估值函数为：货物数量*time/等待船数量 -
-double get_ship_go_w(Ship& ship, int id) {
+// 船在curid排队时时选择id号泊位的估值函数[500为船移动的代价]，选择价值大那个。估值函数为：
+double get_ship_go_w(Ship& ship, int id, int curid) {
     int cnt = park[id].goods_queue_.size();
-    return cnt * 10000;
+    // 如果不选择移动
+    if (id == curid) return cnt * 100;
+    // 移动到其他位置有500的时间
+    return cnt * 100 - 500;
     // return park.goods_queue_.size()+
     // / park.ships_queue_.size() - ();
 }
+// 船在虚拟点时准备去那个泊位的估值函数，估值函数：
 double get_ship_back_w(Ship& ship, int id) {
     int cnt = park[id].goods_queue_.size();
     return cnt * 10000;
@@ -36,7 +40,7 @@ void ships_behave(Frame& current) {
             }
             // 装满了或者装了超过100个直接出发去虚拟点
             else if (!ship.remain_capacity_ ||
-                     ship.capacity_ - ship.remain_capacity_ >= 40) {
+                     ship.capacity_ - ship.remain_capacity_ >= 25) {
                 ship.go(-1);
             } else {
                 // std::cerr << "Loading" << std::endl;
@@ -47,7 +51,7 @@ void ships_behave(Frame& current) {
             // 决定去哪个泊位
             double maxw = 0, id = 0;
             for (int i = 0; i < kMAX_PARK; i++) {
-                double w = get_ship_go_w(ship, i);
+                double w = get_ship_go_w(ship, i, ship.parkid_);
                 if (w > maxw) {
                     maxw = w;
                     id = i;

@@ -8,7 +8,7 @@
 #include "Robot.h"
 #include "global.h"
 
-// 10个机器人的行走策略以及捡起和放下货物的动作
+// 10个机器人的行走策略以及捡起和放下货物的动作 -- 避免拿相同货物
 void robots_behave(Frame& current) {
     // return;
     // 预计最优方向
@@ -17,8 +17,10 @@ void robots_behave(Frame& current) {
     std::vector<Axis> cur_dir(kMAX_ROBOT, Axis(0, 0));
     // 要找的货物的位置
     std::vector<Axis> maxgood_pos(kMAX_ROBOT, Axis(0, 0));
+    // copy一份防止多个机器人瞄准同个货物
+    auto tmpgoods = unpickedGoods;
     for (int i = 0; i < kMAX_ROBOT; i++) {
-        auto t = current.robot[i].get_dir();
+        auto t = current.robot[i].get_dir(tmpgoods, current);
         // std::pair<Axis, Axis> t = {dir[0], dir[0]};
         dir[i] = t.first;
         cur_dir[i] = dir[i];
@@ -57,8 +59,7 @@ void robots_behave(Frame& current) {
                     tmp.y_ >= kMAX_GRID)
                     cur_dir[i] = Axis(0, 0);
                 // continue;
-            }
-            else {
+            } else {
                 cur_dir[i] = Axis(dx[ran_num % 5], dy[ran_num % 5]);
                 Axis tmp = current.robot[i].pos_ + cur_dir[i];
                 if (tmp.x_ < 0 || tmp.x_ >= kMAX_GRID || tmp.y_ < 0 ||

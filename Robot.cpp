@@ -8,10 +8,12 @@
 #include <iostream>
 #include <queue>
 #include <random>
+#include <set>
 #include <utility>
 #include <vector>
 
 #include "Axis.h"
+#include "Frame.h"
 #include "Grid.h"
 #include "Park.h"
 #include "global.h"
@@ -119,8 +121,16 @@ double getw(int dis1, int dis2, int val) { return (double)val / (dis1 + dis2); }
 // 得到机器人到park[id]的最短路径的长度
 int Robot::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
 
+// 机器人有了货物后要去到的泊位的估值函数:当前港口的货物数量*10/到他的距离，大的优先去
+double Robot::get_toship_w(int id,
+                           std::vector<std::vector<int>>& dis) {  //
+    int dis_to_ship = dis[park[id].pos_.x_][park[id].pos_.y_];
+    int park_good = park[id].goods_queue_.size();
+    return (double)park_good / dis_to_ship;
+}
 // robot到哪里取货,以及要的货物的位置
-std::pair<Axis, Axis> Robot::get_dir() {
+std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
+                                     Frame& current) {
     // 求出bfs矩阵
     std::vector<std::vector<int>> dis(kMAX_GRID,
                                       std::vector<int>(kMAX_GRID, INT_MAX / 2));
@@ -160,18 +170,37 @@ std::pair<Axis, Axis> Robot::get_dir() {
         }
     }
 
-    // 机器人扛着物品,则向最近的泊位走
+    // 机器人扛着物品,影响他的运输的有泊位货物个数以及dis，向货物个数/dis最大的那个走
     if (object_ == 1) {
         int id = 0;
         for (int j = 1; j < kMAX_PARK; j++) {  // 10
-            if (dis[park[j].pos_.x_][park[j].pos_.y_] <
-                dis[park[id].pos_.x_][park[id].pos_.y_]) {
-                id = j;
-            }
+            if (get_toship_w(j, dis) > get_toship_w(id, dis)) id = j;
         }
         if (dis[park[id].pos_.x_][park[id].pos_.y_] == INT_MAX / 2)
             return {{0, 0}, {0, 0}};
-
+        // 如果距离该泊位在kval帧内，并且在这个范围内有他前面的robot，则他选择停止
+        int kval = 5;
+        if (dis[park[id].pos_.x_][park[id].pos_.y_] <= kval) {
+            for (int i = 0; i < id_; i++) {
+                int x = current.robot[i].pos_.x_, y = current.robot[i].pos_.y_;
+                if (std::abs(park[id].pos_.x_ - x) +
+                        std::abs(park[id].pos_.y_ - y) <=
+                    kval) {
+                    return {{0, 0}, {0, 0}};
+                }
+            }
+            // std::vector<Axis> points;
+            // int x = park[id].pos_.x_, y = park[id].pos_.y_;
+            // for (int dx = 0; dx <= 3; dx++) {
+            //     for (int dy = 0; dy <= 3; dy++) {
+            //         points.push_back({x + dx, y + dy});
+            //     }
+            // }
+            // int ran_num = rand() % 16;
+            // x = points[ran_num].x_, y = points[ran_num].y_;
+            // std::queue<int> q1;
+        }
+        // 距离比较远则直接向泊位走
         int x = park[id].pos_.x_, y = park[id].pos_.y_;
         while (pre[x][y] != Axis(pos_.x_, pos_.y_)) {
             int tmpx = pre[x][y].x_;
@@ -212,6 +241,7 @@ std::pair<Axis, Axis> Robot::get_dir() {
     // 计算机器人到货物的路径（一定存在路径）
     assert(dis[maxgood.pos_.x_][maxgood.pos_.y_] != INT_MAX / 2);
     x = maxgood.pos_.x_, y = maxgood.pos_.y_;
+    unpickedGoods.erase(maxgood);
     while (pre[x][y] != Axis(pos_.x_, pos_.y_)) {
         int tmpx = pre[x][y].x_;
         int tmpy = pre[x][y].y_;
