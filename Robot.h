@@ -11,9 +11,10 @@
 #include <vector>
 
 #include "Axis.h"
-#include "Frame.h"
 #include "Goods.h"
 const int kMAX_ROBOT = 10;
+
+class Frame;
 
 class Robot {
    public:
