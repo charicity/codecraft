@@ -121,12 +121,32 @@ double getw(int dis1, int dis2, int val) { return (double)val / (dis1 + dis2); }
 // 得到机器人到park[id]的最短路径的长度
 int Robot::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
 
-// 机器人有了货物后要去到的泊位的估值函数:当前港口的货物数量*10/到他的距离，大的优先去
-double Robot::get_toship_w(int id,
-                           std::vector<std::vector<int>>& dis) {  //
+// 机器人有了货物后要去到的泊位的估值函数:当前港口的货物数量*50-到他的距离+有没有船，大的优先去
+double Robot::get_toship_w(int id, std::vector<std::vector<int>>& dis,
+                           Frame& current) {  //
     int dis_to_ship = dis[park[id].pos_.x_][park[id].pos_.y_];
     int park_good = park[id].goods_queue_.size();
-    return (double)park_good / dis_to_ship;
+    return -dis_to_ship;
+    // int sum = 0;
+    // if (park_good <= 20)
+    //     sum += park_good * 5;  // 尽量搬来吧
+    // else if (park_good <= 50)  // 勉强可以搬来
+    //     sum += park_good;
+    // else
+    //     sum -= 100;  // 不要再搬来了
+    // // 每多一艘船加100
+    // for (int i = 0; i < kMAX_SHIP; i++) {
+    //     if (current.ship[i].id_ == id) sum += 100;
+    // }
+
+    // if (dis_to_ship <= 10)
+    //     dis_to_ship *= 20;
+    // else if (dis_to_ship <= 50)
+    //     dis_to_ship *= 4;
+    // else if (dis_to_ship <= 100)
+    //     dis_to_ship *= 2;
+    // sum += dis_to_ship;
+    // return sum;
 }
 // robot到哪里取货,以及要的货物的位置
 std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
@@ -170,15 +190,16 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
         }
     }
 
-    // 机器人扛着物品,影响他的运输的有泊位货物个数以及dis，向货物个数/dis最大的那个走
+    // 机器人扛着物品
     if (object_ == 1) {
         int id = 0;
         for (int j = 1; j < kMAX_PARK; j++) {  // 10
-            if (get_toship_w(j, dis) > get_toship_w(id, dis)) id = j;
+            if (get_toship_w(j, dis, current) > get_toship_w(id, dis, current))
+                id = j;
         }
         if (dis[park[id].pos_.x_][park[id].pos_.y_] == INT_MAX / 2)
             return {{0, 0}, {0, 0}};
-        // 如果距离该泊位在kval帧内，并且在这个范围内有他前面的robot，则他选择停止
+        // 如果距离该泊位在kval帧内，并且在这个范围内有他前面的robot，则他选择停止等前面人搬完
         int kval = 5;
         if (dis[park[id].pos_.x_][park[id].pos_.y_] <= kval) {
             for (int i = 0; i < id_; i++) {

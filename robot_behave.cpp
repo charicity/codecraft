@@ -26,7 +26,6 @@ void robots_behave(Frame& current) {
         cur_dir[i] = dir[i];
         maxgood_pos[i] = t.second;
     }
-
     int dx[5] = {-1, 0, 0, 1, 0}, dy[5] = {0, -1, 1, 0, 0};
     for (int i = 0; i < kMAX_ROBOT; i++) {
         // 没有跳到别人去的地方
@@ -56,14 +55,18 @@ void robots_behave(Frame& current) {
                 cur_dir[i] = Axis(dx[ran_num % 4], dy[ran_num % 4]);
                 Axis tmp = current.robot[i].pos_ + cur_dir[i];
                 if (tmp.x_ < 0 || tmp.x_ >= kMAX_GRID || tmp.y_ < 0 ||
-                    tmp.y_ >= kMAX_GRID)
+                    tmp.y_ >= kMAX_GRID ||
+                     grid[tmp.x_][tmp.y_].state_ == Grid::ocean ||
+                    grid[tmp.x_][tmp.y_].state_ == Grid::barrier)
                     cur_dir[i] = Axis(0, 0);
                 // continue;
             } else {
                 cur_dir[i] = Axis(dx[ran_num % 5], dy[ran_num % 5]);
                 Axis tmp = current.robot[i].pos_ + cur_dir[i];
                 if (tmp.x_ < 0 || tmp.x_ >= kMAX_GRID || tmp.y_ < 0 ||
-                    tmp.y_ >= kMAX_GRID)
+                    tmp.y_ >= kMAX_GRID ||
+                    grid[tmp.x_][tmp.y_].state_ == Grid::ocean ||
+                    grid[tmp.x_][tmp.y_].state_ == Grid::barrier)
                     cur_dir[i] = Axis(0, 0);
             }
         }

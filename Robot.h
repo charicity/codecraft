@@ -33,7 +33,7 @@ class Robot {
     // 返回机器人到id号泊位的最短距离长度
     int get_dis(int id);
     // 机器人有了货物后要去到的泊位的估值函数:
-    double get_toship_w(int, std::vector<std::vector<int>>&);
+    double get_toship_w(int, std::vector<std::vector<int>>&, Frame&);
     void move(int state);
     void pickUp();     // 捡起一个货物
     void placeDown();  // 放下一个货物

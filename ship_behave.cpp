@@ -13,10 +13,16 @@ double get_ship_go_w(Ship& ship, int id, int curid) {
     // return park.goods_queue_.size()+
     // / park.ships_queue_.size() - ();
 }
-// 船在虚拟点时准备去那个泊位的估值函数，估值函数：
+// 船在虚拟点时准备去那个泊位的估值函数，估值函数：泊位的物品价值
 double get_ship_back_w(Ship& ship, int id) {
-    int cnt = park[id].goods_queue_.size();
-    return cnt * 10000;
+    auto que = park[id].goods_queue_;
+    int sum = 0;
+    while (que.size()) {
+        auto good = que.front();
+        que.pop();
+        sum += good.value_;
+    }
+    return sum;
 }
 void ships_behave(Frame& current) {
     for (int i = 0; i < kMAX_SHIP; i++) {
@@ -38,9 +44,10 @@ void ships_behave(Frame& current) {
                 }
                 ship.go(id);
             }
-            // 装满了或者装了超过100个直接出发去虚拟点
+            // 装满了或者装了超过15个直接出发去虚拟点,或者剩下的时间-需要的时间，榨干价值
             else if (!ship.remain_capacity_ ||
-                     ship.capacity_ - ship.remain_capacity_ >= 25) {
+                     ship.capacity_ - ship.remain_capacity_ >= 15 ||
+                     15000 - current.code_ - park[ship.parkid_].time_ <= 10) {
                 ship.go(-1);
             } else {
                 // std::cerr << "Loading" << std::endl;
