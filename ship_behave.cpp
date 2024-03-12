@@ -46,7 +46,7 @@ void ships_behave(Frame& current) {
             }
             // 装满了或者装了超过15个直接出发去虚拟点,或者剩下的时间-需要的时间，榨干价值
             else if (!ship.remain_capacity_ ||
-                     ship.capacity_ - ship.remain_capacity_ >= 15 ||
+                     ship.capacity_ - ship.remain_capacity_ >= 30 ||
                      15000 - current.code_ - park[ship.parkid_].time_ <= 10) {
                 ship.go(-1);
             } else {

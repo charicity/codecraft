@@ -165,8 +165,8 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
     dir.push_back({0, -1});
     dir.push_back({0, 1});
     dir.push_back({1, 0});
-    // std::random_device rd;
-    // std::mt19937 g(rd());
+    std::random_device rd;
+    std::mt19937 g(rd());
     // 随机bfs
     while (q.size()) {
         Axis u = q.front();
