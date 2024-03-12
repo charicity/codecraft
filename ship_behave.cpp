@@ -9,7 +9,7 @@ double get_ship_go_w(Ship& ship, int id, int curid) {
     // 如果不选择移动
     if (id == curid) return cnt * 100;
     // 移动到其他位置有500的时间
-    return cnt * 100 - 500;
+    return cnt * 10 - 500;
     // return park.goods_queue_.size()+
     // / park.ships_queue_.size() - ();
 }
@@ -45,8 +45,10 @@ void ships_behave(Frame& current) {
                 ship.go(id);
             }
             // 装满了或者装了超过15个直接出发去虚拟点,或者剩下的时间-需要的时间，榨干价值
+            // 泊位没货物了也走
             else if (!ship.remain_capacity_ ||
                      ship.capacity_ - ship.remain_capacity_ >= 60 ||
+                     !park[ship.parkid_].goods_queue_.size() ||
                      15000 - current.code_ - park[ship.parkid_].time_ <= 10) {
                 ship.go(-1);
             } else {

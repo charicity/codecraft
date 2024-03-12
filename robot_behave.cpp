@@ -28,6 +28,7 @@ void robots_behave(Frame& current) {
     }
     int dx[5] = {-1, 0, 0, 1, 0}, dy[5] = {0, -1, 1, 0, 0};
     for (int i = 0; i < kMAX_ROBOT; i++) {
+        
         // 没有跳到别人去的地方
         bool jump_to_other = 0;
         for (int j = 0; j < i; j++) {
