@@ -126,14 +126,14 @@ double Robot::get_toship_w(int id, std::vector<std::vector<int>>& dis,
                            Frame& current) {  //
     int dis_to_ship = dis[park[id].pos_.x_][park[id].pos_.y_];
     int park_good = park[id].goods_queue_.size();
-    return -dis_to_ship;
-    // int sum = 0;
-    // if (park_good <= 20)
-    //     sum += park_good * 5;  // 尽量搬来吧
-    // else if (park_good <= 50)  // 勉强可以搬来
-    //     sum += park_good;
-    // else
-    //     sum -= 100;  // 不要再搬来了
+    int sum = -dis_to_ship;
+    if (park_good <= 20)
+        sum += park_good * 3;  // 尽量搬来吧
+    else if (park_good <= 50)  // 勉强可以搬来
+        sum += park_good;
+    else
+        sum -= 100;  // 不要再搬来了
+    return sum;
     // // 每多一艘船加100
     // for (int i = 0; i < kMAX_SHIP; i++) {
     //     if (current.ship[i].id_ == id) sum += 100;
@@ -199,8 +199,29 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
         }
         if (dis[park[id].pos_.x_][park[id].pos_.y_] == INT_MAX / 2)
             return {{0, 0}, {0, 0}};
-        // 距离比较远则直接向泊位走
+        // 如果距离该泊位在kval帧内，并且在这个范围内有他前面的robot，则他选择停止等前面人搬完
+        int kval = 8;
+        if (dis[park[id].pos_.x_][park[id].pos_.y_] <= kval) {
+            for (int i = 0; i < id_; i++) {
+                int x = current.robot[i].pos_.x_, y = current.robot[i].pos_.y_;
+                if (std::abs(park[id].pos_.x_ - x) +
+                        std::abs(park[id].pos_.y_ - y) <=
+                    kval && current.robot[i].object_==1) {
+                    return {{0, 0}, {0, 0}};
+                }
+            }
+        }
+
+        // 距离比较远则直接向泊位的某个位置走
+        std::vector<Axis> points;
         int x = park[id].pos_.x_, y = park[id].pos_.y_;
+        for (int dx = 0; dx <= 3; dx++) {
+            for (int dy = 0; dy <= 3; dy++) {
+                points.push_back({x + dx, y + dy});
+            }
+        }
+        int ran_num = rand() % 16;
+        x = points[ran_num].x_, y = points[ran_num].y_;
         while (pre[x][y] != Axis(pos_.x_, pos_.y_)) {
             int tmpx = pre[x][y].x_;
             int tmpy = pre[x][y].y_;
