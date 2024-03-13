@@ -147,31 +147,39 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
             points.insert({x, y});
         }
     }
+    // 存起来将整个图这些地方加锁
+    std::vector<std::pair<Axis, int>> vec;
+    for (auto t : points) {
+        vec.push_back({t, grid[t.x_][t.y_].state_});
+        grid[t.x_][t.y_].state_ = Grid::barrier;
+    }
+
     // 随机bfs
     while (q.size()) {
         Axis u = q.front();
         q.pop();
-        std::random_shuffle(dir.begin(), dir.end());
-        int dx[4], dy[4];
+        // 随机
+        int a = rand() % 4, b = rand() % 4;
+        std::swap(dir[a], dir[b]);
         for (int i = 0; i < 4; i++) {
-            dx[i] = dir[i].x_;
-            dy[i] = dir[i].y_;
-        }
-        for (int i = 0; i < 4; i++) {
-            int x = u.x_ + dx[i], y = u.y_ + dy[i];
+            int x = u.x_ + dir[i].x_, y = u.y_ + dir[i].y_;
             if (x < 0 || y < 0 || x >= kMAX_GRID || y >= kMAX_GRID) continue;
             if (grid[x][y].state_ == Grid::barrier ||
                 grid[x][y].state_ == Grid::ocean)
                 continue;
-            // 也不能走到其他points里面的位置
             if (dis[x][y] != INT_MAX / 2) continue;
-            if (points.count({x, y})) continue;
             q.push({x, y});
             dis[x][y] = dis[u.x_][u.y_] + 1;
             pre[x][y] = {u.x_, u.y_};
         }
     }
-    // return {{0, 0}, {0, 0}};
+    // 恢复现场
+    for (auto t : vec) {
+        Axis pos = t.first;
+        int state = t.second;
+        grid[pos.x_][pos.y_].state_ = state;
+    }
+
     // 机器人扛着物品
     if (object_ == 1) {
         int id = 0;
