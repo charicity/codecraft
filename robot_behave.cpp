@@ -22,55 +22,9 @@ void robots_behave(Frame& current) {
     for (int i = 0; i < kMAX_ROBOT; i++) {
         auto t = current.robot[i].get_dir(tmpgoods, current);
         // std::pair<Axis, Axis> t = {dir[0], dir[0]};
-        dir[i] = t.first;
-        cur_dir[i] = dir[i];
+        // dir[i] = t.first;
+        cur_dir[i] = t.first;
         maxgood_pos[i] = t.second;
-    }
-    int dx[5] = {-1, 0, 0, 1, 0}, dy[5] = {0, -1, 1, 0, 0};
-    for (int i = 0; i < kMAX_ROBOT; i++) {
-        
-        // 没有跳到别人去的地方
-        bool jump_to_other = 0;
-        for (int j = 0; j < i; j++) {
-            if (current.robot[i].pos_ + dir[i] ==
-                current.robot[j].pos_ + cur_dir[j]) {
-                jump_to_other = 1;
-            }
-        }
-        // 如果跳过去的地方没有人，则直接跳过去
-        int ran_num = random();
-        if (!jump_to_other) {
-            cur_dir[i] = dir[i];
-        } else {
-            // 他的位置是否被占领
-            bool isbe_jump = 0;
-            for (int j = 0; j < i; j++) {
-                // 别人跳到他的位置则他只能选择跳走
-                if (current.robot[i].pos_ ==
-                    current.robot[j].pos_ + cur_dir[i]) {
-                    isbe_jump = 1;
-                }
-            }
-            // 如果他的位置被别人占领，则他随机一个方向走
-            if (isbe_jump) {
-                cur_dir[i] = Axis(dx[ran_num % 4], dy[ran_num % 4]);
-                Axis tmp = current.robot[i].pos_ + cur_dir[i];
-                if (tmp.x_ < 0 || tmp.x_ >= kMAX_GRID || tmp.y_ < 0 ||
-                    tmp.y_ >= kMAX_GRID ||
-                     grid[tmp.x_][tmp.y_].state_ == Grid::ocean ||
-                    grid[tmp.x_][tmp.y_].state_ == Grid::barrier)
-                    cur_dir[i] = Axis(0, 0);
-                // continue;
-            } else {
-                cur_dir[i] = Axis(dx[ran_num % 5], dy[ran_num % 5]);
-                Axis tmp = current.robot[i].pos_ + cur_dir[i];
-                if (tmp.x_ < 0 || tmp.x_ >= kMAX_GRID || tmp.y_ < 0 ||
-                    tmp.y_ >= kMAX_GRID ||
-                    grid[tmp.x_][tmp.y_].state_ == Grid::ocean ||
-                    grid[tmp.x_][tmp.y_].state_ == Grid::barrier)
-                    cur_dir[i] = Axis(0, 0);
-            }
-        }
     }
 
     // 机器人的行走，如果state为0表示恢复，则不能行走
