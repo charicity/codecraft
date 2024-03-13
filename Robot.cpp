@@ -1,8 +1,7 @@
 #include "Robot.h"
 
-#include <assert.h>
-
 #include <algorithm>
+#include <cassert>
 #include <climits>
 #include <cstring>
 #include <iostream>
@@ -95,23 +94,30 @@ void Robot::input(int id) {
 }
 
 // dis1为从机器人到货物的最短距离，dis2为从货物到泊位的最短距离 ,权值计算函数
-double getw(int dis1, int dis2, int val) { return (double)val / (dis1 + dis2); }
+double getw(int dis1, int dis2, int val) { return (double)val / (dis1); }
 
 // 得到机器人到park[id]的最短路径的长度
 int Robot::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
 
-// 机器人有了货物后要去到的泊位的估值函数:当前港口的货物数量*50-到他的距离+有没有船，大的优先去
+// 机器人有了货物后要去到的泊位的估值函数:优先去大的
 double Robot::get_toship_w(int id, std::vector<std::vector<int>>& dis,
                            Frame& current) {  //
     int dis_to_ship = dis[park[id].pos_.x_][park[id].pos_.y_];
     int park_good = park[id].goods_queue_.size();
     double sum = -dis_to_ship;
+    // 尽量叠加货物
     if (park_good <= 20)
         sum += park_good * 3;  // 尽量搬来吧
     else if (park_good <= 50)  // 勉强可以搬来
         sum += park_good;
     else
         sum -= 100;  // 不要再搬来了
+
+    // 如果有船的话则增加其贡献
+    for (int i = 0; i < kMAX_SHIP; i++) {
+        if (current.ship[i].id_ == id) sum += 100;
+    }
+
     return sum;
 }
 // robot到哪里取货,以及要的货物的位置
@@ -146,8 +152,6 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
         Axis u = q.front();
         q.pop();
         std::random_shuffle(dir.begin(), dir.end());
-        // 不要用这个函数！！！！！
-        //  std::shuffle(dir.begin(), dir.end(), g);
         int dx[4], dy[4];
         for (int i = 0; i < 4; i++) {
             dx[i] = dir[i].x_;
@@ -177,16 +181,15 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
         }
         if (dis[park[id].pos_.x_][park[id].pos_.y_] == INT_MAX / 2)
             return {{0, 0}, {0, 0}};
-
         int x = park[id].pos_.x_, y = park[id].pos_.y_;
-        while (pre[x][y] != Axis(pos_.x_, pos_.y_)) {
+        while (pre[x][y] != pos_) {
             int tmpx = pre[x][y].x_;
             int tmpy = pre[x][y].y_;
             x = tmpx;
             y = tmpy;
         }
 
-        return {{x - pos_.x_, y - pos_.y_}, {0, 0}};
+        return {{x - pos_.x_, y - pos_.y_}, {-1, -1}};
     }
 
     // return {{0, 0}, {0, 0}};
@@ -194,9 +197,12 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
     // 枚举货物和泊位算最优权值解
     double maxw = -100;
     Goods maxgood;
+    maxgood.pos_ = {-1, -1};
     int parkid = 0;
     for (auto goods : unpickedGoods) {
         // 机器人到货物的距离
+        assert(goods.pos_.x_ >= 0 && goods.pos_.y_ >= 0 &&
+               goods.pos_.x_ < kMAX_GRID && goods.pos_.y_ < kMAX_GRID);
         int dis1 = dis[goods.pos_.x_][goods.pos_.y_];
         if (dis1 == INT_MAX / 2) continue;
         // 货物到泊位的距离
@@ -213,13 +219,17 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
     }
 
     // 没得走
-    if (maxw < 0) return {{0, 0}, {0, 0}};
-
+    if (maxw < 0) return {{0, 0}, {-1, -1}};
+    // 如果货物就在脚下就直接拿起
+    if (dis[maxgood.pos_.x_][maxgood.pos_.y_] == 0) {
+        return {{0, 0}, pos_};
+    }
     // 计算机器人到货物的路径（一定存在路径）
     assert(dis[maxgood.pos_.x_][maxgood.pos_.y_] != INT_MAX / 2);
+    assert(maxgood.pos_ != Axis(-1, -1));
     x = maxgood.pos_.x_, y = maxgood.pos_.y_;
     unpickedGoods.erase(maxgood);
-    while (pre[x][y] != Axis(pos_.x_, pos_.y_)) {
+    while (pre[x][y] != pos_) {
         int tmpx = pre[x][y].x_;
         int tmpy = pre[x][y].y_;
         x = tmpx;
