@@ -94,7 +94,9 @@ void Robot::input(int id) {
 }
 
 // dis1为从机器人到货物的最短距离，dis2为从货物到泊位的最短距离 ,权值计算函数
-double getw(int dis1, int dis2, int val) { return (double)val / (dis1); }
+double getw(int dis1, int dis2, int val) {
+    return (double)val / (dis1 * 3 + dis2);
+}
 
 // 得到机器人到park[id]的最短路径的长度
 int Robot::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
@@ -115,7 +117,7 @@ double Robot::get_toship_w(int id, std::vector<std::vector<int>>& dis,
 
     // 如果有船的话则增加其贡献
     for (int i = 0; i < kMAX_SHIP; i++) {
-        if (current.ship[i].id_ == id) sum += 100;
+        if (current.ship[i].parkid_ == id) sum += 100;
     }
 
     return sum;
