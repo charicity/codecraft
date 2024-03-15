@@ -172,7 +172,7 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
         points.insert(robot.pos_);
         for (int k = 0; k < 4; k++) {
             int x = robot.pos_.x_ + dir[k].x_, y = robot.pos_.y_ + dir[k].y_;
-            points.insert({x, y});
+            if(x>=0 && x<kMAX_GRID && y>=0 && y<kMAX_GRID)points.insert({x, y});
         }
     }
     // 存起来将整个图这些地方加锁
@@ -210,7 +210,6 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
         int state = t.second;
         grid[pos.x_][pos.y_].state_ = state;
     }
-
     // 机器人扛着物品
     if (object_ == 1) {
         int id = 0;
@@ -231,6 +230,7 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
 
         return {{x - pos_.x_, y - pos_.y_}, {-1, -1}};
     }
+    
     // return {{0, 0}, {0, 0}};
 
     // 枚举货物和泊位算最优权值解
@@ -266,6 +266,7 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
             }
         }
     }
+    std::cerr << "in" << std::endl;
     // 没得走
     choose[id_] = 0;
     if (maxw < 0) return {{0, 0}, {-1, -1}};
@@ -288,5 +289,6 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
         y = tmpy;
     }
     choose[id_] = maxgood.code_;
+    std::cerr << "out" << std::endl;
     return {{x - pos_.x_, y - pos_.y_}, maxgood.pos_};
 }
