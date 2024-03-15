@@ -18,9 +18,14 @@ int main() {
     while (true) {
         Frame current;
         if (step.frame_input(current) == false) {
-            return 0;
+            break;
         }
         step.frame_process(current);
         step.frame_output(current);
     }
+    for (int i = 0; i < kMAX_SHIP; ++i) {
+        std::cerr << ship_info[i].last_ << std::endl;
+    }
+    std::cerr << "cnt_good=" << cnt_good << std::endl;
+    return 0;
 }

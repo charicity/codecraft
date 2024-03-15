@@ -28,6 +28,7 @@ void Robot::pickUp() {
     grid[pos_.x_][pos_.y_].remove();
 
     carrying = tobePicked;
+    cnt_good += tobePicked.value_;
     std::string s = "get ";
     s += (char)('0' + id_);
     action_sequence.push(s);
@@ -94,7 +95,10 @@ void Robot::input(int id) {
 }
 
 // dis1为从机器人到货物的最短距离，dis2为从货物到泊位的最短距离 ,权值计算函数
-double getw(int dis1, int dis2, int val) { return (double)1.0 / dis1; }
+double getw(int dis1, int dis2, int val, Frame& current) {
+    // if (current.code_ <= 40) return val;
+    return (double)val / (dis1 + dis2);
+}
 
 // 得到机器人到park[id]的最短路径的长度
 int Robot::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
@@ -103,20 +107,31 @@ int Robot::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
 double Robot::get_toship_w(int id, std::vector<std::vector<int>>& dis,
                            Frame& current) {  //
     int dis_to_ship = dis[park[id].pos_.x_][park[id].pos_.y_];
-    int park_good = park[id].goods_queue_.size();
+    auto park_good = park[id].goods_queue_;
     double sum = -dis_to_ship;
+    if (park[id].is_ban) sum -= 100000;
+    // if (park[id].time_ + 1010 >= 15000 - current.code_ && ) sum -= 100000;
+    // if (park_good.size() <= 20)
+    //     sum += park_good.size() * 10;  // 尽量搬来吧
+    // else if (park_good.size() <= 50)  // 此时他还是有点物品的勉强可以搬来
+    //     sum += park_good.size();
+    // else
+    //     sum -= 100;  // 此时他的附近基本没有物品了，不要再搬来了
     // 尽量叠加货物
-    if (park_good <= 20)
-        sum += park_good * 3;  // 尽量搬来吧
-    else if (park_good <= 50)  // 勉强可以搬来
-        sum += park_good;
-    else
-        sum -= 100;  // 不要再搬来了
+    // int totle_val = 0, totle_cnt;
+    // while (park_good.size()) {
+    //     totle_val += park_good.front().value_;
+    //     totle_cnt++;
+    //     park_good.pop();
+    // }
+    // if (totle_cnt >= 5) {  // 有了5个样本后开始测其平均价值
+    //     sum += (double)totle_val / totle_cnt * 2;
+    // }
 
     // 如果有船的话则增加其贡献
-    for (int i = 0; i < kMAX_SHIP; i++) {
-        if (current.ship[i].parkid_ == id) sum += 100;
-    }
+    // for (int i = 0; i < kMAX_SHIP; i++) {
+    //     if (current.ship[i].parkid_ == id) sum += 50;
+    // }
 
     return sum;
 }
@@ -155,9 +170,11 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
     }
 
     // 随机bfs
+    int cnt = 0;
     while (q.size()) {
         Axis u = q.front();
         q.pop();
+        if (cnt >= 20000) break;
         // 随机
         int a = rand() % 4, b = rand() % 4;
         std::swap(dir[a], dir[b]);
@@ -168,6 +185,7 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
                 grid[x][y].state_ == Grid::ocean)
                 continue;
             if (dis[x][y] != INT_MAX / 2) continue;
+            cnt++;
             q.push({x, y});
             dis[x][y] = dis[u.x_][u.y_] + 1;
             pre[x][y] = {u.x_, u.y_};
@@ -209,15 +227,15 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
     int parkid = 0;
     for (auto goods : unpickedGoods) {
         // 机器人到货物的距离
-        assert(goods.pos_.x_ >= 0 && goods.pos_.y_ >= 0 &&
-               goods.pos_.x_ < kMAX_GRID && goods.pos_.y_ < kMAX_GRID);
+        // assert(goods.pos_.x_ >= 0 && goods.pos_.y_ >= 0 &&
+        //        goods.pos_.x_ < kMAX_GRID && goods.pos_.y_ < kMAX_GRID);
         int dis1 = dis[goods.pos_.x_][goods.pos_.y_];
         if (dis1 == INT_MAX / 2) continue;
         // 货物到泊位的距离
         for (int id = 0; id < kMAX_PARK; id++) {
             int dis2 = goods.get_dis(id);
             if (dis2 == INT_MAX / 2) continue;
-            double w = getw(dis1, dis2, goods.value_);
+            double w = getw(dis1, dis2, goods.value_, current);
             if (w > maxw) {
                 maxw = w;
                 parkid = id;
@@ -234,7 +252,7 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
     }
     // 计算机器人到货物的路径（一定存在路径）
     assert(dis[maxgood.pos_.x_][maxgood.pos_.y_] != INT_MAX / 2);
-    assert(maxgood.pos_ != Axis(-1, -1));
+    // assert(maxgood.pos_ != Axis(-1, -1));
     x = maxgood.pos_.x_, y = maxgood.pos_.y_;
     unpickedGoods.erase(maxgood);
     while (pre[x][y] != pos_) {

@@ -6,12 +6,17 @@
 #include "Robot.h"
 #include "global.h"
 // 船在curid排队时时选择id号泊位的估值函数[500为船移动的代价]，选择价值大那个。估值函数为：
-double get_ship_go_w(Ship& ship, int id, int curid) {
+double get_ship_go_w(Ship& ship, int id, int curid, Frame& current) {
     int cnt = park[id].goods_queue_.size();
     // 如果不选择移动
-    if (id == curid) return cnt * 100;
+    if (id == curid) return cnt * 50;
+    int sum = 0;
+    for (int i = 0; i < kMAX_SHIP; i++) {
+        if (ship.parkid_ == id) sum -= 1000;
+    }
+    sum += cnt * 20;
+    return sum;
     // 移动到其他位置有500的时间
-    return cnt * 20 - 500;
     // return park.goods_queue_.size()+
     // / park.ships_queue_.size() - ();
 }
@@ -19,57 +24,87 @@ double get_ship_go_w(Ship& ship, int id, int curid) {
 double get_ship_back_w(Ship& ship, int id, Frame& current) {
     auto que = park[id].goods_queue_;
     int sum = que.size();
-    // 每有一艘船在这里就减100
+    // 每有一艘船在这里就减200
     for (int i = 0; i < kMAX_SHIP; i++) {
-        if (current.ship[i].parkid_ == id) sum -= 100;
+        if (current.ship[i].parkid_ == id) sum -= 200;
     }
+    // sum -= park[id].time_;
     return sum;
 }
 void ships_behave(Frame& current) {
+    // 维护last_
+    for (int i = 0; i < kMAX_SHIP; i++) {
+        auto& ship = current.ship[i];
+        auto& info = ship_info[ship.id_];
+
+        if (ship.status_ == 1 || ship.status_ == 2) {
+            info.last_ = ship.parkid_;
+        }
+        ship.last_ = info.last_;
+    }
+    // 其他的
     for (int i = 0; i < kMAX_SHIP; i++) {
         // 如果船在移动则不用管
         auto& ship = current.ship[i];
-        if (ship.status_ == 0) continue;
-
+        if (ship.status_ == 0) {
+            if (ship.last_ != -1 &&
+                15000 - current.code_ - park[ship.last_].time_ <= 10)
+                ship.go(-1, current);
+            continue;
+        }
         // 先决定要不要go
         if (ship.status_ == 1) {       // 船在泊位或者虚拟点
             if (ship.parkid_ == -1) {  // 虚拟点
                 double maxw = 0, id = 0;
                 for (int i = 0; i < kMAX_PARK; i++) {
+                    if (park[i].have_ship()) continue;
                     double w = get_ship_back_w(ship, i, current);
                     if (w > maxw) {
                         maxw = w;
                         id = i;
                     }
                 }
-                ship.go(id);
+                ship.go(id, current);
             }
             // 装满了或者装了超过15个直接出发去虚拟点,或者剩下的时间-需要的时间，榨干价值
             // 泊位没货物了也走
             else if (!ship.remain_capacity_ ||
-                     ship.capacity_ - ship.remain_capacity_ >= 70 ||
+                     ship.capacity_ - ship.remain_capacity_ >= 2000 ||
                      15000 - current.code_ - park[ship.parkid_].time_ <= 10) {
-                ship.go(-1);
+                int id = -1;  // 去虚拟点
+                for (int i = 0; i < kMAX_PARK; i++) {
+                    if (park[i].time_ + 500 <
+                        park[ship.parkid_].time_) {  // 先去别的泊位再去虚拟点
+                        id = i;
+                    }
+                }
+                ship.go(id, current);
             } else if (park[ship.parkid_].goods_queue_.size() ==
                        0) {  // 没货物则去别的地方
                 int id = 0;
                 for (int i = 0; i < kMAX_PARK; i++) {
-                    if (get_ship_go_w(ship, i, ship.parkid_) >
-                        get_ship_go_w(ship, id, ship.parkid_)) {
+                    if (park[i].have_ship()) continue;
+                    if (get_ship_go_w(ship, i, ship.parkid_, current) >
+                        get_ship_go_w(ship, id, ship.parkid_, current)) {
                         id = i;
                     }
                 }
-                if (id != ship.parkid_) ship.go(id);
+                if (id != ship.parkid_) ship.go(id, current);
             } else {  // 有货物则直接装
                 // std::cerr << "Loading" << std::endl;
                 park[ship.parkid_].load(ship);
             }
 
         } else {  // 船在排队
+            if (15000 - current.code_ - park[ship.parkid_].time_ <= 10) {
+                ship.go(-1, current);
+                continue;
+            }
             // 决定去哪个泊位
             double maxw = 0, id = 0;
             for (int i = 0; i < kMAX_PARK; i++) {
-                double w = get_ship_go_w(ship, i, ship.parkid_);
+                if (park[i].have_ship()) continue;
+                double w = get_ship_go_w(ship, i, ship.parkid_, current);
                 if (w > maxw) {
                     maxw = w;
                     id = i;
@@ -77,7 +112,7 @@ void ships_behave(Frame& current) {
             }
             // 最终去id号泊位
             if (id != ship.parkid_) {
-                ship.go(id);
+                ship.go(id, current);
             }
         }
     }

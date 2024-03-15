@@ -2,6 +2,7 @@
 #define PARK_H
 
 #include <queue>
+#include <set>
 
 #include "Axis.h"
 #include "Goods.h"
@@ -17,6 +18,7 @@ class Park {
     }
     Axis pos_;
     std::queue<Goods> goods_queue_;
+    std::set<int> tend_ship;  // int装的是ship_id
     int time_;      // 表示该泊位轮船运输到虚拟点的时间
     int velocity_;  // 每帧可以装载的物品数
     Axis pre[kMAX_GRID][kMAX_GRID];
@@ -32,6 +34,9 @@ class Park {
         return pos_.x_ <= check.x_ && check.x_ <= (pos_.x_ + 3) &&
                pos_.y_ <= check.y_ && check.y_ <= (pos_.y_ + 3);
     }
+    int is_ban = 0;
+
+    bool have_ship();
 };
 
 #endif
