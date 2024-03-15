@@ -31,4 +31,5 @@ extern Grid grid[kMAX_GRID][kMAX_GRID];
 
 extern Park park[kMAX_PARK];
 
+extern int choose[kMAX_ROBOT];
 #endif

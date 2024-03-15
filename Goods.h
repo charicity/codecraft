@@ -32,6 +32,9 @@ class Goods {
     }
 
     void showoff();
+    int expire_frame(int code_) {
+        return (happened_frame_ + Goods::kMAX_EXPIRE) - code_;
+    }
 };
 
 #endif

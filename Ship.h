@@ -15,6 +15,8 @@ struct Ship {
     // 有Ship_Keep后期维护
     int last_;
 
+    bool done_ = false;  // 是否已经正在逃生
+
     static void init();
     void input(int id);
     // 船要去往的位置 -1，0，1....9,-1表示虚拟点，0-9表示泊位编号

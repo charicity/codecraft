@@ -29,6 +29,7 @@ void Robot::pickUp() {
 
     carrying = tobePicked;
     cnt_good += tobePicked.value_;
+
     std::string s = "get ";
     s += (char)('0' + id_);
     action_sequence.push(s);
@@ -95,9 +96,16 @@ void Robot::input(int id) {
 }
 
 // dis1为从机器人到货物的最短距离，dis2为从货物到泊位的最短距离 ,权值计算函数
-double getw(int dis1, int dis2, int val, Frame& current) {
-    // if (current.code_ <= 40) return val;
-    return (double)val / (dis1 + dis2);
+double getw(int robotid, int dis1, int dis2, int val, Frame& current) {
+    if (robotid % 5 == 0)
+        return (double)val / (dis1 + dis2);
+    else if (robotid % 5 == 1)
+        return (double)(val * val) / (dis1 + dis2);
+    else if (robotid % 5 == 2)
+        return (double)(val * val * val) / (dis1 + dis2);
+    else if (robotid % 5 == 3)
+        return (double)(val * val * val * val) / (dis1 + dis2);
+    return (double)(val * val * val * val * val) / (dis1 + dis2);
 }
 
 // 得到机器人到park[id]的最短路径的长度
@@ -109,7 +117,7 @@ double Robot::get_toship_w(int id, std::vector<std::vector<int>>& dis,
     int dis_to_ship = dis[park[id].pos_.x_][park[id].pos_.y_];
     auto park_good = park[id].goods_queue_;
     double sum = -dis_to_ship;
-    if (park[id].is_ban > current.code_) sum -= 100000;
+    // if (park[id].is_ban > current.code_) sum -= 100000;
     // if (park[id].time_ + 1010 >= 15000 - current.code_ && ) sum -= 100000;
     // if (park_good.size() <= 20)
     //     sum += park_good.size() * 10;  // 尽量搬来吧
@@ -174,7 +182,7 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
     while (q.size()) {
         Axis u = q.front();
         q.pop();
-        if (cnt >= 20000) break;
+        // if (cnt >= 40000) break;
         // 随机
         int a = rand() % 4, b = rand() % 4;
         std::swap(dir[a], dir[b]);
@@ -207,6 +215,7 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
         }
         if (dis[park[id].pos_.x_][park[id].pos_.y_] == INT_MAX / 2)
             return {{0, 0}, {0, 0}};
+        // id = id_; //每个机器人负责一个港口
         int x = park[id].pos_.x_, y = park[id].pos_.y_;
         while (pre[x][y] != pos_) {
             int tmpx = pre[x][y].x_;
@@ -217,15 +226,24 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
 
         return {{x - pos_.x_, y - pos_.y_}, {-1, -1}};
     }
-
     // return {{0, 0}, {0, 0}};
 
     // 枚举货物和泊位算最优权值解
-    double maxw = -100;
+    double maxw = -100000;
     Goods maxgood;
     maxgood.pos_ = {-1, -1};
+    // maxgood.value_ = -10000;
     int parkid = 0;
     for (auto goods : unpickedGoods) {
+        if (dis[goods.pos_.x_][goods.pos_.y_] >=
+            goods.expire_frame(current.code_))
+            continue;
+        bool flag = 0;
+        for (int i = 0; i < kMAX_ROBOT;
+             i++) {  // 这个物品为上个人的瞄准对象我就不瞄准了
+            if (choose[i] == goods.code_ && i != id_) flag = 1;
+        }
+        if (flag) continue;
         // 机器人到货物的距离
         // assert(goods.pos_.x_ >= 0 && goods.pos_.y_ >= 0 &&
         //        goods.pos_.x_ < kMAX_GRID && goods.pos_.y_ < kMAX_GRID);
@@ -235,7 +253,7 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
         for (int id = 0; id < kMAX_PARK; id++) {
             int dis2 = goods.get_dis(id);
             if (dis2 == INT_MAX / 2) continue;
-            double w = getw(dis1, dis2, goods.value_, current);
+            double w = getw(id_, dis1, dis2, goods.value_, current);
             if (w > maxw) {
                 maxw = w;
                 parkid = id;
@@ -243,11 +261,14 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
             }
         }
     }
-
     // 没得走
+    choose[id_] = 0;
     if (maxw < 0) return {{0, 0}, {-1, -1}};
     // 如果货物就在脚下就直接拿起
+    // assert(maxgood.pos_.x_ >= 0);
     if (dis[maxgood.pos_.x_][maxgood.pos_.y_] == 0) {
+        pickUp();
+        choose[id_] = 0;
         return {{0, 0}, pos_};
     }
     // 计算机器人到货物的路径（一定存在路径）
@@ -261,5 +282,6 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
         x = tmpx;
         y = tmpy;
     }
+    choose[id_] = maxgood.code_;
     return {{x - pos_.x_, y - pos_.y_}, maxgood.pos_};
 }

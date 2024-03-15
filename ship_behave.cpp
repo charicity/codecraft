@@ -38,17 +38,32 @@ void ships_behave(Frame& current) {
         auto& info = ship_info[ship.id_];
 
         if (ship.status_ == 1 || ship.status_ == 2) {
+            if (info.last_ != ship.parkid_ && ship.parkid_ == -1) {
+                std::cerr << "ship " << i << " reaches -1 at frame"
+                          << current.code_ << std::endl;
+            }
             info.last_ = ship.parkid_;
         }
         ship.last_ = info.last_;
     }
     // 其他的
     for (int i = 0; i < kMAX_SHIP; i++) {
-        // 如果船在移动则不用管
         auto& ship = current.ship[i];
+        if (ship.done_ ||
+            15000 - current.code_ - 2 <= park[ship.parkid_].time_) {
+            ship.done_ = true;
+            if (ship.parkid_ != -1) {
+                ship.go(-1, current);
+            }
+
+            continue;
+        }
+        // 如果船在移动则不用管
+
         if (ship.status_ == 0) {
             if (ship.last_ != -1 &&
-                15000 - current.code_ - park[ship.last_].time_ <= 10)
+                15000 - current.code_ - park[ship.last_].time_ <= 10 &&
+                15000 - current.code_ - park[ship.last_].time_ >= 1)
                 ship.go(-1, current);
             continue;
         }
@@ -70,7 +85,8 @@ void ships_behave(Frame& current) {
             // 泊位没货物了也走
             else if (!ship.remain_capacity_ ||
                      ship.capacity_ - ship.remain_capacity_ >= 2000 ||
-                     15000 - current.code_ - park[ship.parkid_].time_ <= 10) {
+                     (15000 - current.code_ - park[ship.parkid_].time_ <= 10 &&
+                      15000 - current.code_ - park[ship.parkid_].time_ >= 1)) {
                 int id = -1;  // 去虚拟点
                 for (int i = 0; i < kMAX_PARK; i++) {
                     if (park[i].time_ + 500 <
@@ -96,7 +112,8 @@ void ships_behave(Frame& current) {
             }
 
         } else {  // 船在排队
-            if (15000 - current.code_ - park[ship.parkid_].time_ <= 10) {
+            if (15000 - current.code_ - park[ship.parkid_].time_ <= 10 &&
+                15000 - current.code_ - park[ship.parkid_].time_ >= 1) {
                 ship.go(-1, current);
                 continue;
             }

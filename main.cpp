@@ -27,5 +27,4 @@ int main() {
         std::cerr << ship_info[i].last_ << std::endl;
     }
     std::cerr << "cnt_good=" << cnt_good << std::endl;
-    return 0;
 }

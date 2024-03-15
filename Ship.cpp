@@ -40,7 +40,7 @@ void Ship::go(int id, Frame& current) {
     }
 
     // if (park[now_id].tend_ship.size() == 0) {
-    park[now_id].is_ban = 2010 + current.code_ + park[now_id].time_;
+    // park[now_id].is_ban = 2010 + current.code_ + park[now_id].time_;
     // }
 
     // if (park[now_id].tend_ship.size() == 0 &&

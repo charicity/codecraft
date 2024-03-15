@@ -34,7 +34,7 @@ class Park {
         return pos_.x_ <= check.x_ && check.x_ <= (pos_.x_ + 3) &&
                pos_.y_ <= check.y_ && check.y_ <= (pos_.y_ + 3);
     }
-    int is_ban = 0;
+    // int is_ban = 0;
 
     bool have_ship();
 };
