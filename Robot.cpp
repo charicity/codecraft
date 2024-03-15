@@ -97,6 +97,11 @@ void Robot::input(int id) {
 
 // dis1为从机器人到货物的最短距离，dis2为从货物到泊位的最短距离 ,权值计算函数
 double getw(int robotid, int dis1, int dis2, int val, Frame& current) {
+    // if (robotid == 0) return 1.0/(dis1 + dis2);
+    // if(robotid%3==0)return (double)val / (dis1 + dis2);
+    // if(robotid%3==1)return (double)(val*val) / (dis1 + dis2);
+    // return (double)(val*val*val) / (dis1 + dis2);
+    if (dis1 + dis2 == 0) return 10000000;
     if (robotid % 5 == 0)
         return (double)val / (dis1 + dis2);
     else if (robotid % 5 == 1)
