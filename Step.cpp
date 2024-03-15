@@ -44,6 +44,14 @@ void ControlLogic::init_initialize() {
 
 // 输入一帧
 bool ControlLogic::frame_input(Frame &current) {
+    bool ff = 0;
+    for (int i = 0; i < kMAX_PARK; ++i) {
+        if (park[i].is_ban <= current.code_) ff = 1;
+    }
+    if (!ff) {
+        std::cerr << "Unexpected ban" << std::endl;
+    }
+
     bool f = current.input();
     if (f == false) return false;
 

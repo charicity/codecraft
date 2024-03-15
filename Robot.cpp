@@ -109,7 +109,7 @@ double Robot::get_toship_w(int id, std::vector<std::vector<int>>& dis,
     int dis_to_ship = dis[park[id].pos_.x_][park[id].pos_.y_];
     auto park_good = park[id].goods_queue_;
     double sum = -dis_to_ship;
-    if (park[id].is_ban) sum -= 100000;
+    if (park[id].is_ban > current.code_) sum -= 100000;
     // if (park[id].time_ + 1010 >= 15000 - current.code_ && ) sum -= 100000;
     // if (park_good.size() <= 20)
     //     sum += park_good.size() * 10;  // 尽量搬来吧
