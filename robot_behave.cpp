@@ -12,7 +12,6 @@
 void robots_behave(Frame& current) {
     // return;
     // 预计最优方向
-    std::vector<Axis> dir(kMAX_ROBOT, Axis(0, 0));
     // 实际方向
     std::vector<Axis> cur_dir(kMAX_ROBOT, Axis(0, 0));
     // 要找的货物的位置
