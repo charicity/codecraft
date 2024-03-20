@@ -43,9 +43,18 @@ void ships_behave(Frame& current) {
         is_special_frame = true;
     }
 
-    if (current.code_ == 15000 - 500 - 2 - 2 * Park::max_back) {
+    // if (current.code_ == 15000 - 500 - 2 - 2 * Park::max_back) {
+    //     //特判半空帧
+    //     for (int i = 0; i < kMAX_SHIP; ++i) {
+    //         if (ship_info[i].last_ != -1) current.ship[i].go(-1, current);
+    //     }
+    //     is_special_frame = true;
+    // }
+
+    if (current.code_ == 15000 - Park::max_back - 8) {
+        // 特判半空帧
         for (int i = 0; i < kMAX_SHIP; ++i) {
-            current.ship[i].go(-1, current);
+            if (ship_info[i].last_ != -1) current.ship[i].go(-1, current);
         }
         is_special_frame = true;
     }
@@ -198,7 +207,6 @@ void ships_behave(Frame& current) {
             // 最终去id号泊位
             if (id != ship.parkid_) {
                 if (id == -1) {
-                    std::cerr << "???" << std::endl;
                     if (park[ship.parkid_].can_return(current)) {
                         ship.returning_ = true;
                         if (ship.parkid_ != Park::min_id &&

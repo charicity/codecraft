@@ -5,27 +5,13 @@
 #include "Frame.h"
 #include "Goods.h"
 #include "Grid.h"
+#include "Ship.h"
 #include "Step.h"
 #include "global.h"
 
-int main() {
-    std::ios::sync_with_stdio(0);
-    std::cin.tie(0);
-    std::cout.tie(0);
-
-    ControlLogic step;
-    step.init_input();
-    step.init_initialize();
-
-    while (true) {
-        Frame current;
-        if (step.frame_input(current) == false) {
-            break;
-        }
-        step.frame_process(current);
-        step.frame_output(current);
-    }
+void print_debug() {
     std::cerr << "Ship:" << std::endl;
+    std::cerr << "capacity:" << Ship::capacity_ << std::endl;
     for (int i = 0; i < kMAX_SHIP; ++i) {
         std::cerr << i << " stay=" << ship_info[i].last_
                   << " goto=" << ship_info[i].to_
@@ -46,4 +32,25 @@ int main() {
     std::cerr << std::endl;
     std::cerr << "[tot_picked, final_score]=[" << cnt_good << "," << final_score
               << "]" << std::endl;
+}
+
+int main() {
+    std::ios::sync_with_stdio(0);
+    std::cin.tie(0);
+    std::cout.tie(0);
+
+    ControlLogic step;
+    step.init_input();
+    step.init_initialize();
+    print_debug();
+    while (true) {
+        Frame current;
+        if (step.frame_input(current) == false) {
+            break;
+        }
+        step.frame_process(current);
+        step.frame_output(current);
+    }
+
+    print_debug();
 }

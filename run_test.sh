@@ -1,1 +1,1 @@
-./info/PreliminaryJudge -f 0 -s 7868 ./main -m ./info/maps/map312.txt -l ASSERT
+./info/PreliminaryJudge -f 0 -s 666 ./main -m ./info/maps/map312.txt -l ASSERT
