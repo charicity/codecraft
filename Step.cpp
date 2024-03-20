@@ -57,6 +57,7 @@ bool ControlLogic::frame_input(Frame &current) {
 }
 
 void ControlLogic::frame_process(Frame &current) {
+    final_score = std::max(final_score, current.currentMoney_);
     if (current.code_ % 1000 == 0)
         std::cerr << "processing frame #" << current.code_ << std::endl;
     // 处理过期问题

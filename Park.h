@@ -24,6 +24,10 @@ class Park {
     Axis pre[kMAX_GRID][kMAX_GRID];
     int dis[kMAX_GRID][kMAX_GRID];
     // 初始化泊位信息以及泊位到每个点的bfs路线
+
+    bool is_ban = false;
+    static int tot_ban;
+
     void init();
     void preprocess_bfs();
 
@@ -34,9 +38,7 @@ class Park {
         return pos_.x_ <= check.x_ && check.x_ <= (pos_.x_ + 3) &&
                pos_.y_ <= check.y_ && check.y_ <= (pos_.y_ + 3);
     }
-    // int is_ban = 0;
 
     bool have_ship();
 };
-
 #endif

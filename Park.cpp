@@ -7,6 +7,7 @@
 #include "global.h"
 
 Park park[kMAX_PARK];
+int Park::tot_ban = 0;
 
 void Park::init() {
     Axis tmp;

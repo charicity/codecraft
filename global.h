@@ -11,6 +11,7 @@
 #include "Park.h"
 
 extern int cnt_good;
+extern int final_score;
 
 extern Ship_Keep ship_info[kMAX_SHIP];
 extern std::queue<std::string> action_sequence;

@@ -25,8 +25,18 @@ int main() {
         step.frame_process(current);
         step.frame_output(current);
     }
+    std::cerr << "Ship:" << std::endl;
     for (int i = 0; i < kMAX_SHIP; ++i) {
-        std::cerr << ship_info[i].last_ << std::endl;
+        std::cerr << ship_info[i].last_ << " ";
     }
-    std::cerr << "cnt_good=" << cnt_good << std::endl;
+    std::cerr << std::endl;
+
+    std::cerr << "Park:" << std::endl;
+    for (int i = 0; i < kMAX_PARK; ++i) {
+        std::cerr << park[i].is_ban << " ";
+    }
+    std::cerr << std::endl;
+
+    std::cerr << "[tot_picked, final_score]=[" << cnt_good << "," << final_score
+              << "]" << std::endl;
 }

@@ -115,9 +115,11 @@ double getw(int robotid, int dis1, int dis2, int val, int expire_time,
         return (double)(val * 10 + (1000 - expire_time) * 2) / (dis1 + dis2);
     if (val >= 75)
         return (double)(val * 10 + (1000 - expire_time) * 1) / (dis1 + dis2);
-    if (val >= 50) return (double)(val*10+1000 - expire_time) / (dis1 + dis2);
-    if (val >= 25) return (double)(val*10+1000 - expire_time) / (dis1 + dis2);
-    //小于25的不捡了
+    if (val >= 50)
+        return (double)(val * 10 + 1000 - expire_time) / (dis1 + dis2);
+    if (val >= 25)
+        return (double)(val * 10 + 1000 - expire_time) / (dis1 + dis2);
+    // 小于25的不捡了
     return 0;
     // 都为1/4概率
     // if (val >= 150)
@@ -139,8 +141,8 @@ double Robot::get_toship_w(int id, std::vector<std::vector<int>>& dis,
     int dis_to_ship = dis[park[id].pos_.x_][park[id].pos_.y_];
     auto park_good = park[id].goods_queue_;
     double sum = -dis_to_ship;
+    if (park[id].is_ban) sum -= 100000;
     // if (park[id].is_ban > current.code_) sum -= 100000;
-    // if (park[id].time_ + 1010 >= 15000 - current.code_ && ) sum -= 100000;
     // if (park_good.size() <= 10)
     //     sum += park_good.size() * 4;  // 尽量搬来吧
     // else if (park_good.size() <= 20)
