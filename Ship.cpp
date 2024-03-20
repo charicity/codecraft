@@ -19,8 +19,19 @@ void Ship::input(int id) {
 void Ship::init() { std::cin >> Ship::capacity_; }
 
 void Ship::go(int id, Frame& current) {
-    // if (status_ == 1 && parkid_ != -1 &&)
     int now_id = parkid_;
+    ship_info[id].to_ = id;
+
+    if (id == parkid_) {
+        if (id != -1) {
+            std::cerr << "[IGNORED] Ship " << id_ << " from " << now_id
+                      << " left for " << id << " at frame " << current.code_
+                      << std::endl;
+        }
+        // 如果目的地和之前的一样，则无视这个指令
+        return;
+    }
+
     if (id == -1) {
         for (int i = 0; i < kMAX_PARK; ++i) {
             park[i].tend_ship.erase(id_);
@@ -40,22 +51,19 @@ void Ship::go(int id, Frame& current) {
         action_sequence.push(s);
     }
 
-    // if (park[now_id].tend_ship.size() == 0) {
-    // park[now_id].is_ban = 2010 + current.code_ + park[now_id].time_;
-    // }
-    // std::cerr << "Ship " << id_ << " from " << now_id << " left for " << id
-    //           << " at frame " << current.code_ << std::endl;
+    std::cerr << "Ship " << id_ << " from " << now_id << " left for " << id
+              << " at frame " << current.code_ << std::endl;
     // std::cerr << "Status: " << park[now_id].tend_ship.size() << "&&"
     //           << 1010 + park[now_id].time_ << "&&" << Park::tot_ban
     //           << std::endl;
-    if (now_id != -1 && park[now_id].tend_ship.size() == 0 &&
-        std::min(park[now_id].min_time_, 500) + park[now_id].min_time_ + 1 >=
-            15000 - current.code_ &&
-        Park::tot_ban < 5) {
-        // std::cerr << "at frame " << current.code_ << " banned park " <<
-        // now_id
-        //           << std::endl;
-        park[now_id].is_ban = true;
-        ++Park::tot_ban;
-    }
+    // if (now_id != -1 && park[now_id].tend_ship.size() == 0 &&
+    //     std::min(park[now_id].min_time_, 500) + park[now_id].min_time_ + 1 >=
+    //         15000 - current.code_ &&
+    //     Park::tot_ban < 5) {
+    //     // std::cerr << "at frame " << current.code_ << " banned park " <<
+    //     // now_id
+    //     //           << std::endl;
+    //     park[now_id].is_ban = true;
+    //     ++Park::tot_ban;
+    // }
 }

@@ -28,7 +28,7 @@ bool Frame::input() {
     if (code_ == 1) {
         for (int i = 0; i < kMAX_SHIP; ++i) {
             ship[i].parkid_ = -1;
-            ship[i].status_ = 1;
+            ship[i].status_ = Ship::arrived;
             ship[i].remain_capacity_ = Ship::capacity_;
         }
     }

@@ -23,7 +23,7 @@ void ControlLogic::init_input() {
     for (int i = 0; i < kMAX_PARK; ++i) {
         int id;
         std::cin >> id;
-        park[id].init();
+        park[id].init(i);
     }
 
     Ship::init();

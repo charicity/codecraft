@@ -7,17 +7,56 @@
 #include "global.h"
 
 Park park[kMAX_PARK];
-int Park::tot_ban = 0;                            // 被封禁了几个港口
-int Park::min_back = INT_MAX, Park::min_id = -1;  // 回去时间最小的港口和它的id
+int Park::tot_ban = 0;         // 被封禁了几个港口
+int Park::min_back = INT_MAX;  // 回去时间最小的港口用时
+int Park::min_id = -1;         // 回去时间最小的港口id
+int Park::max_back = INT_MIN;
 
-void Park::init() {
+void Park::init(int id) {
     Axis tmp;
     pos_.input();
+    id_ = id;
     std::cin >> time_ >> velocity_;
     // std::cerr << time_ << std::endl;
 }
 
-bool Park::have_ship() { return tend_ship.size(); }
+// 在当前时间去往虚拟点后，能否再回来做出贡献
+// 是的话返回yes，否的话返回false
+bool Park::can_return(Frame& current) {
+    int rest_frame = 15000 - current.code_;
+    int min_time = 1 + min_time_ + Park::min_back;
+
+    return rest_frame >= min_time;
+}
+
+bool Park::have_ship() {
+    if (id_ == Park::min_id) return false;  // 如果是中转用港口，则永远可以过去
+    return tend_ship.size();
+}
+
+// 是否能从虚拟点到这个点、装完货之后再回来
+// 否的话返回Park::impossible，否则返回要去往的park.id_
+int Park::canback_from_virtual(Frame& current) {
+    int rest_frame = 15000 - current.code_;
+    int min_time = 2 * min_time_;
+    if (min_time + 1 <= rest_frame) {  // 至少留一帧装货吧...
+        if (this->need_shortcut()) return Park::min_id;
+        return id_;
+    }
+    return Park::impossible;
+}
+
+// 是否能从别的泊位到这个点、装完货之后再回来
+// 否的话返回Park::impossible，否则返回要去往的park.id_
+int Park::canback_from_other(Frame& current) {
+    int rest_frame = 15000 - current.code_;
+    int min_time = 500 + min_time_;
+    if (min_time + 1 <= rest_frame) {  // 至少留一帧装货吧...
+        if (this->need_shortcut()) return Park::min_id;
+        return id_;
+    }
+    return Park::impossible;
+}
 
 void Park::put(const Goods& tobePut) { goods_queue_.push(tobePut); }
 
@@ -36,14 +75,10 @@ void Park::preprocess_mintime() {
             Park::min_back = park[i].time_;
             Park::min_id = i;
         }
+        Park::max_back = std::max(Park::max_back, park[i].time_);
     }
-
-    std::cerr << "minid=" << Park::min_id << std::endl;
     for (int i = 0; i < kMAX_PARK; ++i) {
         park[i].min_time_ = std::min(park[i].time_, Park::min_back + 500);
-        std::cerr << i << ":"
-                  << "parktime=" << park[i].time_
-                  << " mintime=" << park[i].min_time_ << std::endl;
     }
 }
 
