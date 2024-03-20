@@ -105,31 +105,75 @@ double getw(int robotid, int dis1, int dis2, int val, int expire_time,
     if (dis1 + dis2 == 0) return 10000000;
     // return (double)(val * 10 + 1000 - expire_time) / (dis1);
     // 1/8概率
-    if (val >= 175)
-        return (double)(val * 10 + (1000 - expire_time) * 5) / (dis1 + dis2);
-    if (val >= 150)
-        return (double)(val * 10 + (1000 - expire_time) * 4) / (dis1 + dis2);
-    if (val >= 125)
-        return (double)(val * 10 + (1000 - expire_time) * 3) / (dis1 + dis2);
-    if (val >= 100)
-        return (double)(val * 10 + (1000 - expire_time) * 2) / (dis1 + dis2);
-    if (val >= 75)
-        return (double)(val * 10 + (1000 - expire_time) * 1) / (dis1 + dis2);
-    if (val >= 50)
-        return (double)(val * 10 + 1000 - expire_time) / (dis1 + dis2);
-    if (val >= 25)
-        return (double)(val * 10 + 1000 - expire_time) / (dis1 + dis2);
-    // 小于25的不捡了
-    return 0;
-    // 都为1/4概率
+    // if (val >= 175)
+    //     return (double)(val * 10 + (1000 - expire_time) * 5) / (dis1 + dis2);
     // if (val >= 150)
-    //     return (double)(val * 10 + (1000 - expire_time)* 5) / (dis1 +
-    //     dis2);
-    // if (val >= 100)
+    //     return (double)(val * 10 + (1000 - expire_time) * 4) / (dis1 + dis2);
+    // if (val >= 125)
     //     return (double)(val * 10 + (1000 - expire_time) * 3) / (dis1 + dis2);
-    // if (val >= 50)
-    //     return (double)(val * 10 + (1000 - expire_time)) / (dis1 + dis2);
-    // return (double)(val * 10 + 1000 - expire_time) / (dis1 + dis2);
+    // if (val >= 100)
+    //     return (double)(val * 10 + (1000 - expire_time) * 2) / (dis1 + dis2);
+    // if (val >= 75)
+    //     return (double)(val * 10 + (1000 - expire_time) * 1) / (dis1 + dis2);
+    // return 0;
+    // 小于25的不捡了
+    //  return 0;
+    //  都为1/4概率
+    //  总共16种情况
+    //  double d = (dis1 + dis2);
+    //  double w = 0;
+    //  int time = (1000 - expire_time);  // 已经使用的时间越大越紧急
+    //  if (time >= 750)
+    //      w = 4;
+    //  else if (time >= 500)
+    //      w = 3;
+    //  else if (time >= 200)
+    //      w = 2;
+    //  else
+    //      w = 1;
+    //  double ans = (double)val / 200 * (1.0 - (double)(dis1 + dis2) / 1000) *
+    //               ((double)time / 1000);
+    //  return ans;
+    //  if (val >= 150) {
+    //      if (time >= 750)
+    //          return (double)(val * 10 + time * 5) / d;
+    //      else if (time >= 500)
+    //          return (double)(val * 10 + time * 5) / d;
+    //      else if (time >= 250)
+    //          return (double)(val * 10 + time * 2) / d;
+    //      else
+    //          return (double)(val * 10 + time * 2) / d;
+    //  }
+    //  if (val >= 100) {
+    //      if (time >= 750)
+    //          return (double)(val * 10 + time * 5) / d;
+    //      else if (time >= 500)
+    //          return (double)(val * 10 + time * 5) / d;
+    //      else if (time >= 250)
+    //          return (double)(val * 10 + time * 2) / d;
+    //      else
+    //          return (double)(val * 10 + time * 2) / d;
+    //  }
+    //  if (val >= 50) {
+    //      if (time >= 750)
+    //          return (double)(val * 10 + time * 2) / d;
+    //      else if (time >= 500)
+    //          return (double)(val * 10 + time * 2) / d;
+    //      else if (time >= 250)
+    //          return (double)(val * 10 + time * 1) / d;
+    //      else
+    //          return (double)(val * 10 + time * 1) / d;
+    //  } else {
+    //      return (double)((val * 10) + time) / d;
+    //  }
+
+    // 都为1/5概率
+    int d = (dis1 + dis2);
+    if (val >= 160) return (double)(val * 10 + (1000 - expire_time) * 7) / d;
+    if (val >= 120) return (double)(val * 10 + (1000 - expire_time) * 6) / d;
+    if (val >= 80) return (double)(val * 10 + (1000 - expire_time) * 5) / d;
+    if (val >= 40) return (double)(val * 10 + (1000 - expire_time) * 4) / d;
+    return (double)(val * 10 + (1000 - expire_time) * 1) / d;
 }
 
 // 得到机器人到park[id]的最短路径的长度
