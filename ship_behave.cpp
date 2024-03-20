@@ -69,8 +69,8 @@ void ships_behave(Frame& current) {
                     // 到了虚拟点，解除强制返回限制
                     ship.returning_ = false;
                 }
-                std::cerr << "Ship " << i << " reaches " << ship.parkid_
-                          << " at frame" << current.code_ << std::endl;
+                // std::cerr << "Ship " << i << " reaches " << ship.parkid_
+                //           << " at frame" << current.code_ << std::endl;
                 if (info.done_ == 1) info.done_ = 2;
             }
             info.last_ = ship.parkid_;
@@ -94,18 +94,18 @@ void ships_behave(Frame& current) {
                 ship.returning_ = true;
                 if (park[ship.last_].min_time_ == park[ship.last_].time_) {
                     // 直接逃生
-                    std::cerr << "Ship " << i << " escape to " << -1
-                              << " at frame " << current.code_
-                              << " when it was in " << ship.parkid_
-                              << std::endl;
+                    // std::cerr << "Ship " << i << " escape to " << -1
+                    //           << " at frame " << current.code_
+                    //           << " when it was in " << ship.parkid_
+                    //           << std::endl;
                     ship.go(-1, current);
                     info.done_ = 1;
                 } else {
                     // 中转站逃生
                     if (ship.last_ != -1 && ship.status_ != Ship::moving) {
-                        std::cerr << "Ship" << i << " escape to min1-"
-                                  << Park::min_id << " at frame "
-                                  << current.code_ << std::endl;
+                        // std::cerr << "Ship" << i << " escape to min1-"
+                        //           << Park::min_id << " at frame "
+                        //           << current.code_ << std::endl;
                         ship.go(Park::min_id, current);
                         info.done_ = 1;
                     }
@@ -147,7 +147,8 @@ void ships_behave(Frame& current) {
             else if (!ship.remain_capacity_ ||
                      ship.capacity_ - ship.remain_capacity_ >=
                          2000) {  // 在泊位
-                std::cerr << "FILLED";
+                // std::cerr << "FILLED";
+                assert(ship.parkid_ != -1);
                 if (park[ship.parkid_].can_return(current)) {
                     // 如果还回得来，则走
                     ship.returning_ = true;
@@ -169,6 +170,7 @@ void ships_behave(Frame& current) {
                 }
 
             } else {
+                assert(ship.parkid_ != -1);
                 if (park[ship.parkid_].goods_queue_.size() ==
                     0) {  // 没货物则去别的地方
                     int id = ship.parkid_;
@@ -188,6 +190,7 @@ void ships_behave(Frame& current) {
                     }
                 } else {  // 有货物则直接装
                     // std::cerr << "Loading" << std::endl;
+                    assert(ship.parkid_ != -1);
                     park[ship.parkid_].load(ship);
                 }
             }
@@ -207,6 +210,7 @@ void ships_behave(Frame& current) {
             // 最终去id号泊位
             if (id != ship.parkid_) {
                 if (id == -1) {
+                    assert(ship.parkid_ != -1);
                     if (park[ship.parkid_].can_return(current)) {
                         ship.returning_ = true;
                         if (ship.parkid_ != Park::min_id &&
