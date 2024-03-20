@@ -57,7 +57,8 @@ bool ControlLogic::frame_input(Frame &current) {
 }
 
 void ControlLogic::frame_process(Frame &current) {
-    // std::cerr << "processing frame #" << current.code_ << std::endl;
+    if (current.code_ % 1000 == 0)
+        std::cerr << "processing frame #" << current.code_ << std::endl;
     // 处理过期问题
     goods_expire(current.code_);
     // 先进行机器人的操作

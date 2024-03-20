@@ -10,6 +10,9 @@
 #include "Grid.h"
 #include "Park.h"
 
+extern int cnt_good;
+
+extern Ship_Keep ship_info[kMAX_SHIP];
 extern std::queue<std::string> action_sequence;
 
 extern int get_distance(Axis a, Axis b);
@@ -28,4 +31,5 @@ extern Grid grid[kMAX_GRID][kMAX_GRID];
 
 extern Park park[kMAX_PARK];
 
+extern int choose[kMAX_ROBOT];
 #endif

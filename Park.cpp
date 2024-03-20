@@ -15,6 +15,8 @@ void Park::init() {
     // std::cerr << time_ << std::endl;
 }
 
+bool Park::have_ship() { return tend_ship.size(); }
+
 void Park::put(const Goods& tobePut) { goods_queue_.push(tobePut); }
 
 void Park::load(Ship& current_ship) {

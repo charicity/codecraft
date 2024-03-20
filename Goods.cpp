@@ -40,7 +40,7 @@ void Goods::showoff() {
     //           << pos_.y_ << ")" << std::endl;
     // std::cerr << std::cin.eof() << " " << std::cin.fail() << std::endl;
     if (grid[pos_.x_][pos_.y_].haveGood == true) {
-        std::cerr << "in showoff(): Error-STACKED" << std::endl;
+        // std::cerr << "in showoff(): Error-STACKED" << std::endl;
         return;
     }
     unpickedGoods.insert(*this);

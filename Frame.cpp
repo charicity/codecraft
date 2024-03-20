@@ -1,5 +1,6 @@
 #include "Frame.h"
 
+#include <cassert>
 #include <iostream>
 
 bool Frame::input() {
@@ -12,6 +13,7 @@ bool Frame::input() {
         Goods tmp;
         tmp.input(code_);
         goodInfo.push_back(tmp);
+        assert(tmp.value_ <= 200);
     }
 
     for (int i = 0; i < kMAX_ROBOT; ++i) {

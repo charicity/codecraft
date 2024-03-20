@@ -28,6 +28,8 @@ void Robot::pickUp() {
     grid[pos_.x_][pos_.y_].remove();
 
     carrying = tobePicked;
+    cnt_good += tobePicked.value_;
+
     std::string s = "get ";
     s += (char)('0' + id_);
     action_sequence.push(s);
@@ -94,7 +96,39 @@ void Robot::input(int id) {
 }
 
 // dis1为从机器人到货物的最短距离，dis2为从货物到泊位的最短距离 ,权值计算函数
-double getw(int dis1, int dis2, int val) { return (double)1.0 / dis1; }
+double getw(int robotid, int dis1, int dis2, int val, int expire_time,
+            Frame& current) {
+    // if (robotid == 0) return 1.0/(dis1 + dis2);
+    // if(robotid%3==0)return (double)val / (dis1 + dis2);
+    // if(robotid%3==1)return (double)(val*val) / (dis1 + dis2);
+    // return (double)(val*val*val) / (dis1 + dis2);
+    if (dis1 + dis2 == 0) return 10000000;
+    // return (double)(val * 10 + 1000 - expire_time) / (dis1);
+    // 1/8概率
+    if (val >= 175)
+        return (double)(val * 10 + (1000 - expire_time) * 5) / (dis1 + dis2);
+    if (val >= 150)
+        return (double)(val * 10 + (1000 - expire_time) * 4) / (dis1 + dis2);
+    if (val >= 125)
+        return (double)(val * 10 + (1000 - expire_time) * 3) / (dis1 + dis2);
+    if (val >= 100)
+        return (double)(val * 10 + (1000 - expire_time) * 2) / (dis1 + dis2);
+    if (val >= 75)
+        return (double)(val * 10 + (1000 - expire_time) * 1) / (dis1 + dis2);
+    if (val >= 50) return (double)(val*10+1000 - expire_time) / (dis1 + dis2);
+    if (val >= 25) return (double)(val*10+1000 - expire_time) / (dis1 + dis2);
+    //小于25的不捡了
+    return 0;
+    // 都为1/4概率
+    // if (val >= 150)
+    //     return (double)(val * 10 + (1000 - expire_time)* 5) / (dis1 +
+    //     dis2);
+    // if (val >= 100)
+    //     return (double)(val * 10 + (1000 - expire_time) * 3) / (dis1 + dis2);
+    // if (val >= 50)
+    //     return (double)(val * 10 + (1000 - expire_time)) / (dis1 + dis2);
+    // return (double)(val * 10 + 1000 - expire_time) / (dis1 + dis2);
+}
 
 // 得到机器人到park[id]的最短路径的长度
 int Robot::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
@@ -103,21 +137,18 @@ int Robot::get_dis(int id) { return park[id].dis[pos_.x_][pos_.y_]; }
 double Robot::get_toship_w(int id, std::vector<std::vector<int>>& dis,
                            Frame& current) {  //
     int dis_to_ship = dis[park[id].pos_.x_][park[id].pos_.y_];
-    int park_good = park[id].goods_queue_.size();
+    auto park_good = park[id].goods_queue_;
     double sum = -dis_to_ship;
-    // 尽量叠加货物
-    if (park_good <= 20)
-        sum += park_good * 3;  // 尽量搬来吧
-    else if (park_good <= 50)  // 勉强可以搬来
-        sum += park_good;
-    else
-        sum -= 100;  // 不要再搬来了
-
-    // 如果有船的话则增加其贡献
-    for (int i = 0; i < kMAX_SHIP; i++) {
-        if (current.ship[i].parkid_ == id) sum += 100;
-    }
-
+    // if (park[id].is_ban > current.code_) sum -= 100000;
+    // if (park[id].time_ + 1010 >= 15000 - current.code_ && ) sum -= 100000;
+    // if (park_good.size() <= 10)
+    //     sum += park_good.size() * 4;  // 尽量搬来吧
+    // else if (park_good.size() <= 20)
+    //     sum += park_good.size() * 3;
+    // else if (park_good.size() <= 40)  // 此时他还是有点物品的勉强可以搬来
+    //     sum += park_good.size() * 2;
+    // else
+    //     sum -= 100;  // 此时他的附近基本没有物品了，不要再搬来了
     return sum;
 }
 // robot到哪里取货,以及要的货物的位置
@@ -128,9 +159,6 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
     std::vector<std::vector<Axis>> pre(
         kMAX_GRID, std::vector<Axis>(kMAX_GRID, Axis(-1, -1)));
     int x = pos_.x_, y = pos_.y_;
-    dis[x][y] = 0;
-    std::queue<Axis> q;
-    q.push(pos_);
     std::vector<Axis> dir;
     dir.push_back({-1, 0});
     dir.push_back({0, -1});
@@ -144,7 +172,8 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
         points.insert(robot.pos_);
         for (int k = 0; k < 4; k++) {
             int x = robot.pos_.x_ + dir[k].x_, y = robot.pos_.y_ + dir[k].y_;
-            points.insert({x, y});
+            if (x >= 0 && x < kMAX_GRID && y >= 0 && y < kMAX_GRID)
+                points.insert({x, y});
         }
     }
     // 存起来将整个图这些地方加锁
@@ -155,9 +184,16 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
     }
 
     // 随机bfs
-    while (q.size()) {
-        Axis u = q.front();
-        q.pop();
+    const int INF = INT_MAX / 2;
+    // 手写队列
+    dis[x][y] = 0;
+    Axis que[kMAX_GRID * kMAX_GRID * 2];
+    int hh = 0, tt = 0;
+    que[0] = {x, y};
+    int cnt = 0;
+    while (hh <= tt) {
+        Axis u = que[hh++];
+        if (cnt >= 25000) break;
         // 随机
         int a = rand() % 4, b = rand() % 4;
         std::swap(dir[a], dir[b]);
@@ -167,8 +203,9 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
             if (grid[x][y].state_ == Grid::barrier ||
                 grid[x][y].state_ == Grid::ocean)
                 continue;
-            if (dis[x][y] != INT_MAX / 2) continue;
-            q.push({x, y});
+            if (dis[x][y] != INF) continue;
+            cnt++;
+            que[++tt] = {x, y};
             dis[x][y] = dis[u.x_][u.y_] + 1;
             pre[x][y] = {u.x_, u.y_};
         }
@@ -179,7 +216,6 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
         int state = t.second;
         grid[pos.x_][pos.y_].state_ = state;
     }
-
     // 机器人扛着物品
     if (object_ == 1) {
         int id = 0;
@@ -189,6 +225,7 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
         }
         if (dis[park[id].pos_.x_][park[id].pos_.y_] == INT_MAX / 2)
             return {{0, 0}, {0, 0}};
+        // id = id_; //每个机器人负责一个港口
         int x = park[id].pos_.x_, y = park[id].pos_.y_;
         while (pre[x][y] != pos_) {
             int tmpx = pre[x][y].x_;
@@ -203,21 +240,32 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
     // return {{0, 0}, {0, 0}};
 
     // 枚举货物和泊位算最优权值解
-    double maxw = -100;
+    double maxw = -100000;
     Goods maxgood;
     maxgood.pos_ = {-1, -1};
+    // maxgood.value_ = -10000;
     int parkid = 0;
     for (auto goods : unpickedGoods) {
+        if (dis[goods.pos_.x_][goods.pos_.y_] >=
+            goods.expire_frame(current.code_))
+            continue;
+        bool flag = 0;
+        for (int i = 0; i < kMAX_ROBOT;
+             i++) {  // 这个物品为上个人的瞄准对象我就不瞄准了
+            if (choose[i] == goods.code_ && i != id_) flag = 1;
+        }
+        if (flag) continue;
         // 机器人到货物的距离
-        assert(goods.pos_.x_ >= 0 && goods.pos_.y_ >= 0 &&
-               goods.pos_.x_ < kMAX_GRID && goods.pos_.y_ < kMAX_GRID);
+        // assert(goods.pos_.x_ >= 0 && goods.pos_.y_ >= 0 &&
+        //        goods.pos_.x_ < kMAX_GRID && goods.pos_.y_ < kMAX_GRID);
         int dis1 = dis[goods.pos_.x_][goods.pos_.y_];
         if (dis1 == INT_MAX / 2) continue;
         // 货物到泊位的距离
         for (int id = 0; id < kMAX_PARK; id++) {
             int dis2 = goods.get_dis(id);
             if (dis2 == INT_MAX / 2) continue;
-            double w = getw(dis1, dis2, goods.value_);
+            double w = getw(id_, dis1, dis2, goods.value_,
+                            goods.expire_frame(current.code_), current);
             if (w > maxw) {
                 maxw = w;
                 parkid = id;
@@ -225,16 +273,20 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
             }
         }
     }
-
+    // std::cerr << "in" << std::endl;
     // 没得走
+    choose[id_] = 0;
     if (maxw < 0) return {{0, 0}, {-1, -1}};
     // 如果货物就在脚下就直接拿起
+    // assert(maxgood.pos_.x_ >= 0);
     if (dis[maxgood.pos_.x_][maxgood.pos_.y_] == 0) {
+        pickUp();
+        choose[id_] = 0;
         return {{0, 0}, pos_};
     }
     // 计算机器人到货物的路径（一定存在路径）
     assert(dis[maxgood.pos_.x_][maxgood.pos_.y_] != INT_MAX / 2);
-    assert(maxgood.pos_ != Axis(-1, -1));
+    // assert(maxgood.pos_ != Axis(-1, -1));
     x = maxgood.pos_.x_, y = maxgood.pos_.y_;
     unpickedGoods.erase(maxgood);
     while (pre[x][y] != pos_) {
@@ -243,5 +295,7 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
         x = tmpx;
         y = tmpy;
     }
+    choose[id_] = maxgood.code_;
+    // std::cerr << "out" << std::endl;
     return {{x - pos_.x_, y - pos_.y_}, maxgood.pos_};
 }
