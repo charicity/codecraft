@@ -2,9 +2,7 @@ import os
 import fnmatch
 import shutil
 
-def judge(name) -> bool:
-    if(fnmatch.fnmatch(name, '*.py')):
-        return False
+def judge(name):
     if(fnmatch.fnmatch(name, '*.cpp')):
         return False
     if(fnmatch.fnmatch(name, '*.h')):

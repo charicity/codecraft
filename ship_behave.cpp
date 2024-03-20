@@ -45,10 +45,10 @@ void ships_behave(Frame& current) {
         auto& info = ship_info[ship.id_];
 
         if (ship.status_ == 1 || ship.status_ == 2) {
-            // if (info.last_ != ship.parkid_) {
-            //     std::cerr << "ship " << i << " reaches " << ship.parkid_
-            //               << " at frame" << current.code_ << std::endl;
-            // }
+            if (info.last_ != ship.parkid_) {
+                std::cerr << "ship " << i << " reaches " << ship.parkid_
+                          << " at frame" << current.code_ << std::endl;
+            }
             info.last_ = ship.parkid_;
         }
         ship.last_ = info.last_;
@@ -61,20 +61,18 @@ void ships_behave(Frame& current) {
 
         // 逃生处理
         if (ship.done_ == 0) {
-            if (ship.parkid_ != -1 &&
-                15000 - current.code_ - 2 <= park[ship.parkid_].min_time_) {
+            if (ship.last_ != -1 &&
+                15000 - current.code_ - 5 <= park[ship.last_].min_time_) {
                 // 需要逃生
-                if (park[ship.parkid_].min_time_ == park[ship.parkid_].time_) {
+                if (park[ship.last_].min_time_ == park[ship.last_].time_) {
                     // 直接逃生
-                    if (ship.parkid_ != -1) {
-                        std::cerr << "Ship " << i << " escape to " << -1
-                                  << " at frame " << current.code_ << std::endl;
-                        ship.go(-1, current);
-                        info.done_ = 2;
-                    }
+                    std::cerr << "Ship " << i << " escape to " << -1
+                              << " at frame " << current.code_ << std::endl;
+                    ship.go(-1, current);
+                    info.done_ = 2;
                 } else {
                     // 中转站逃生
-                    if (ship.parkid_ != -1 && ship.status_ != 0) {
+                    if (ship.last_ != -1 && ship.status_ != 0) {
                         std::cerr << "Ship" << i << " escape to min-"
                                   << Park::min_id << " at frame "
                                   << current.code_ << std::endl;
@@ -97,6 +95,7 @@ void ships_behave(Frame& current) {
 
         if (ship.done_ == 2) {
             if (ship.status_ == 1 || ship.status_ == 2) {
+                std::cerr << "Ship " << i << " finished escaping" << std::endl;
                 info.done_ = 3;
             } else
                 continue;
@@ -113,7 +112,7 @@ void ships_behave(Frame& current) {
                 double maxw = 0, id = 0;
                 for (int i = 0; i < kMAX_PARK; i++) {
                     if (park[i].have_ship()) continue;
-                    if (park[i].is_ban) continue;
+                    // if (park[i].is_ban) continue;
                     double w = get_ship_back_w(ship, i, current);
                     if (w > maxw) {
                         maxw = w;
