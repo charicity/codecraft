@@ -24,7 +24,8 @@ struct Ship {
 };
 
 struct Ship_Keep {
-    int last_;  // 最后一次到岗在的地方
+    int last_;      // 最后一次到岗在的地方
+    int done_ = 0;  // 是否已经正在逃生
 };
 
 #endif

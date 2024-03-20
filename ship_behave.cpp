@@ -52,10 +52,12 @@ void ships_behave(Frame& current) {
             info.last_ = ship.parkid_;
         }
         ship.last_ = info.last_;
+        ship.done_ = info.done_;
     }
     // 其他的
     for (int i = 0; i < kMAX_SHIP; i++) {
         auto& ship = current.ship[i];
+        auto& info = ship_info[ship.id_];
 
         // 逃生处理
         if (ship.done_ == 0) {
@@ -68,7 +70,7 @@ void ships_behave(Frame& current) {
                         std::cerr << "Ship " << i << " escape to " << -1
                                   << " at frame " << current.code_ << std::endl;
                         ship.go(-1, current);
-                        ship.done_ = 2;
+                        info.done_ = 2;
                     }
                 } else {
                     // 中转站逃生
@@ -77,7 +79,7 @@ void ships_behave(Frame& current) {
                                   << Park::min_id << " at frame "
                                   << current.code_ << std::endl;
                         ship.go(Park::min_id, current);
-                        ship.done_ = 1;
+                        info.done_ = 1;
                     }
                 }
                 continue;
@@ -88,9 +90,16 @@ void ships_behave(Frame& current) {
             if (ship.parkid_ == Park::min_id &&
                 (ship.status_ == 1 || ship.status_ == 2)) {
                 ship.go(-1, current);
-                ship.done_ = 2;
+                info.done_ = 2;
             }
             continue;
+        }
+
+        if (ship.done_ == 2) {
+            if (ship.status_ == 1 || ship.status_ == 2) {
+                info.done_ = 3;
+            } else
+                continue;
         }
 
         // 如果船在移动则不用管
