@@ -20,7 +20,7 @@ void Ship::init() { std::cin >> Ship::capacity_; }
 
 void Ship::go(int id, Frame& current) {
     int now_id = parkid_;
-    ship_info[id].to_ = id;
+    ship_info[id_].to_ = id;
 
     if (id == parkid_) {
         if (id != -1) {
