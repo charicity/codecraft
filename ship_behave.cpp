@@ -5,6 +5,7 @@
 #include "Park.h"
 #include "Robot.h"
 #include "global.h"
+
 // 船在curid排队时时选择id号泊位的估值函数[500为船移动的代价]，选择价值大那个。估值函数为：
 double get_ship_go_w(Ship& ship, int id, int curid, Frame& current) {
     int cnt = park[id].goods_queue_.size();
@@ -32,16 +33,22 @@ double get_ship_back_w(Ship& ship, int id, Frame& current) {
     return sum;
 }
 void ships_behave(Frame& current) {
+    if (current.code_ <= 1) {
+        for (int i = 0; i < kMAX_SHIP; ++i) {
+            current.ship[i].go(i, current);
+        }
+        return;
+    }
     // 维护last_
     for (int i = 0; i < kMAX_SHIP; i++) {
         auto& ship = current.ship[i];
         auto& info = ship_info[ship.id_];
 
         if (ship.status_ == 1 || ship.status_ == 2) {
-            if (info.last_ != ship.parkid_ && ship.parkid_ == -1) {
-                std::cerr << "ship " << i << " reaches -1 at frame"
-                          << current.code_ << std::endl;
-            }
+            // if (info.last_ != ship.parkid_) {
+            //     std::cerr << "ship " << i << " reaches " << ship.parkid_
+            //               << " at frame" << current.code_ << std::endl;
+            // }
             info.last_ = ship.parkid_;
         }
         ship.last_ = info.last_;
@@ -49,22 +56,46 @@ void ships_behave(Frame& current) {
     // 其他的
     for (int i = 0; i < kMAX_SHIP; i++) {
         auto& ship = current.ship[i];
-        if (ship.done_ ||
-            15000 - current.code_ - 2 <= park[ship.parkid_].time_) {
-            ship.done_ = true;
-            if (ship.parkid_ != -1) {
-                ship.go(-1, current);
-            }
 
+        // 逃生处理
+        if (ship.done_ == 0) {
+            if (ship.parkid_ != -1 &&
+                15000 - current.code_ - 2 <= park[ship.parkid_].min_time_) {
+                // 需要逃生
+                if (park[ship.parkid_].min_time_ == park[ship.parkid_].time_) {
+                    // 直接逃生
+                    if (ship.parkid_ != -1) {
+                        std::cerr << "Ship " << i << " escape to " << -1
+                                  << " at frame " << current.code_ << std::endl;
+                        ship.go(-1, current);
+                        ship.done_ = 2;
+                    }
+                } else {
+                    // 中转站逃生
+                    if (ship.parkid_ != -1 && ship.status_ != 0) {
+                        std::cerr << "Ship" << i << " escape to min-"
+                                  << Park::min_id << " at frame "
+                                  << current.code_ << std::endl;
+                        ship.go(Park::min_id, current);
+                        ship.done_ = 1;
+                    }
+                }
+                continue;
+            }
+        }
+
+        if (ship.done_ == 1) {
+            if (ship.parkid_ == Park::min_id &&
+                (ship.status_ == 1 || ship.status_ == 2)) {
+                ship.go(-1, current);
+                ship.done_ = 2;
+            }
             continue;
         }
+
         // 如果船在移动则不用管
 
         if (ship.status_ == 0) {
-            if (ship.last_ != -1 &&
-                15000 - current.code_ - park[ship.last_].time_ <= 10 &&
-                15000 - current.code_ - park[ship.last_].time_ >= 1)
-                ship.go(-1, current);
             continue;
         }
         // 先决定要不要go
@@ -73,6 +104,7 @@ void ships_behave(Frame& current) {
                 double maxw = 0, id = 0;
                 for (int i = 0; i < kMAX_PARK; i++) {
                     if (park[i].have_ship()) continue;
+                    if (park[i].is_ban) continue;
                     double w = get_ship_back_w(ship, i, current);
                     if (w > maxw) {
                         maxw = w;

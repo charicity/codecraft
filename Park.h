@@ -20,16 +20,18 @@ class Park {
     std::queue<Goods> goods_queue_;
     std::set<int> tend_ship;  // int装的是ship_id
     int time_;      // 表示该泊位轮船运输到虚拟点的时间
+    int min_time_;  // 表示该泊位经过其它泊位运输到虚拟点的时间
     int velocity_;  // 每帧可以装载的物品数
     Axis pre[kMAX_GRID][kMAX_GRID];
     int dis[kMAX_GRID][kMAX_GRID];
     // 初始化泊位信息以及泊位到每个点的bfs路线
 
     bool is_ban = false;
-    static int tot_ban;
+    static int tot_ban, min_back, min_id;
 
     void init();
     void preprocess_bfs();
+    static void preprocess_mintime();
 
     void put(const Goods& tobePut);
     void load(Ship& current_ship);

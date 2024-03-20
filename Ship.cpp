@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "Park.h"
 #include "global.h"
 
 int Ship::capacity_ = 0;
@@ -42,15 +43,18 @@ void Ship::go(int id, Frame& current) {
     // if (park[now_id].tend_ship.size() == 0) {
     // park[now_id].is_ban = 2010 + current.code_ + park[now_id].time_;
     // }
-
-    std::cerr << "Ship " << id << " left for " << id << " at frame "
-              << current.code_ << std::endl;
-    std::cerr << "Status: " << park[now_id].tend_ship.size() << "&&"
-              << 1010 + park[now_id].time_ << "&&" << Park::tot_ban
-              << std::endl;
-    if (park[now_id].tend_ship.size() == 0 &&
-        1010 + park[now_id].time_ <= 15000 - current.code_ &&
+    // std::cerr << "Ship " << id_ << " from " << now_id << " left for " << id
+    //           << " at frame " << current.code_ << std::endl;
+    // std::cerr << "Status: " << park[now_id].tend_ship.size() << "&&"
+    //           << 1010 + park[now_id].time_ << "&&" << Park::tot_ban
+    //           << std::endl;
+    if (now_id != -1 && park[now_id].tend_ship.size() == 0 &&
+        std::min(park[now_id].min_time_, 500) + park[now_id].min_time_ + 1 >=
+            15000 - current.code_ &&
         Park::tot_ban < 5) {
+        // std::cerr << "at frame " << current.code_ << " banned park " <<
+        // now_id
+        //           << std::endl;
         park[now_id].is_ban = true;
         ++Park::tot_ban;
     }

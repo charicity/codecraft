@@ -15,7 +15,7 @@ struct Ship {
     // 有Ship_Keep后期维护
     int last_;
 
-    bool done_ = false;  // 是否已经正在逃生
+    int done_ = 0;  // 是否已经正在逃生
 
     static void init();
     void input(int id);

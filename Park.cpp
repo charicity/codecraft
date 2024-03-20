@@ -7,7 +7,8 @@
 #include "global.h"
 
 Park park[kMAX_PARK];
-int Park::tot_ban = 0;
+int Park::tot_ban = 0;                            // 被封禁了几个港口
+int Park::min_back = INT_MAX, Park::min_id = -1;  // 回去时间最小的港口和它的id
 
 void Park::init() {
     Axis tmp;
@@ -26,6 +27,23 @@ void Park::load(Ship& current_ship) {
         current_ship.remain_capacity_--;
         tmp--;
         goods_queue_.pop();
+    }
+}
+
+void Park::preprocess_mintime() {
+    for (int i = 0; i < kMAX_PARK; ++i) {
+        if (park[i].time_ < Park::min_back) {
+            Park::min_back = park[i].time_;
+            Park::min_id = i;
+        }
+    }
+
+    std::cerr << "minid=" << Park::min_id << std::endl;
+    for (int i = 0; i < kMAX_PARK; ++i) {
+        park[i].min_time_ = std::min(park[i].time_, Park::min_back + 500);
+        std::cerr << i << ":"
+                  << "parktime=" << park[i].time_
+                  << " mintime=" << park[i].min_time_ << std::endl;
     }
 }
 

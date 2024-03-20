@@ -38,6 +38,7 @@ void ControlLogic::init_initialize() {
     for (int i = 0; i < kMAX_PARK; ++i) {
         park[i].preprocess_bfs();
     }
+    Park::preprocess_mintime();
     std::cout << "OK" << std::endl;
     std::cout.flush();
 }
@@ -59,7 +60,8 @@ bool ControlLogic::frame_input(Frame &current) {
 void ControlLogic::frame_process(Frame &current) {
     final_score = std::max(final_score, current.currentMoney_);
     if (current.code_ % 1000 == 0)
-        std::cerr << "processing frame #" << current.code_ << std::endl;
+        std::cerr << "processing frame #" << current.code_
+                  << "| Money=" << current.currentMoney_ << std::endl;
     // 处理过期问题
     goods_expire(current.code_);
     // 先进行机器人的操作
