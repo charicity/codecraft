@@ -16,7 +16,9 @@ void Ship::input(int id) {
     }
 }
 
-void Ship::init() { std::cin >> Ship::capacity_; }
+void Ship::init() { std::cin >> Ship::capacity_;
+    std::cerr << capacity_ << std::endl;
+}
 
 void Ship::go(int id, Frame& current) {
     int now_id = parkid_;
