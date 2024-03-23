@@ -132,14 +132,14 @@ double getw(int robotid, int dis1, int dis2, int val, int expire_time,
         if (dis1 == 0) return 100000;
         double d = dis1;
         if (val >= 175)
-            return (double)(val * 10 + (1000 - expire_time) * 7) / d;
+            return (double)(val * 10 + (1000 - expire_time) * 9) / d;
         if (val >= 150)
-            return (double)(val * 10 + (1000 - expire_time) * 5) / d;
+            return (double)(val * 10 + (1000 - expire_time) * 7) / d;
         if (val >= 125)
-            return (double)(val * 10 + (1000 - expire_time) * 3) / d;
+            return (double)(val * 10 + (1000 - expire_time) * 5) / d;
         if (val >= 100)
-            return (double)(val * 10 + (1000 - expire_time) * 2) / d;
-        if (val >= 75) return (double)(val * 10 + (1000 - expire_time) * 1) / d;
+            return (double)(val * 10 + (1000 - expire_time) * 3) / d;
+        if (val >= 75) return (double)(val * 10 + (1000 - expire_time) * 2) / d;
         if (val >= 50) return (double)(val * 10 + 1000 - expire_time) / d;
         // if (val >= 25) return (double)(val * 10 + 1000 - expire_time) / d;
         return 0;
