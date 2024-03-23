@@ -76,9 +76,10 @@ void ControlLogic::frame_process(Frame &current) {
     // 再执行船的操作
     ships_behave(current);
 
-    static bool is_first = false;
-    if (is_first == true && current.code_ + 3 * Park::max_back >= 15000) {
+    static bool is_first = true;
+    if (is_first == true && current.code_ + 4 * Park::max_back >= 15000) {
         if (is_map_open() || is_map_unknown()) {
+            std::cerr << "banning at frame " << current.code_ << std::endl;
             is_first = false;
             std::vector<std::pair<int, int>> pii;
             for (int i = 0; i < kMAX_PARK; ++i) {
@@ -88,7 +89,10 @@ void ControlLogic::frame_process(Frame &current) {
 
             for (int i = 0; i < kMAX_PARK; ++i) {
                 for (int j = 0; j < 5; ++j) {
-                    if (i == pii[j].second) park[i].is_ban = true;
+                    if (i == pii[j].second) {
+                        std::cerr << "banned " << i << std::endl;
+                        park[i].is_ban = true;
+                    }
                 }
             }
         }
