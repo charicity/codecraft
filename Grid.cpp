@@ -1,6 +1,8 @@
 #include "Grid.h"
 
 #include <iostream>
+
+#include "global.h"
 Grid grid[kMAX_GRID][kMAX_GRID];
 
 void Grid::place(const Goods& tobeplace) {
@@ -17,6 +19,7 @@ void Grid::init() {
     switch (c) {
         case '.': {
             state_ = Grid::empty;
+            ++cnt_ground;
             break;
         }
         case '*': {
@@ -25,12 +28,14 @@ void Grid::init() {
         }
         case '#': {
             state_ = Grid::barrier;
+            ++cnt_barriar;
             break;
         }
         case 'A': {
             state_ = Grid::robot;
             /*特殊处理，把机器人变成空地*/
             state_ = Grid::empty;
+            ++cnt_ground;
             break;
         }
         case 'B': {

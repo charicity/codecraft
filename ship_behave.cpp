@@ -51,13 +51,21 @@ void ships_behave(Frame& current) {
     //     is_special_frame = true;
     // }
 
-    if (current.code_ == 15000 - Park::max_back - 8) {
+    if (current.code_ == 15000 - 10 - 2 * Park::max_back) {
         // 特判半空帧
         for (int i = 0; i < kMAX_SHIP; ++i) {
             if (ship_info[i].last_ != -1) current.ship[i].go(-1, current);
         }
         is_special_frame = true;
     }
+
+    // if (current.code_ == 15000 - Park::max_back - 8) {
+    //     // 特判半空帧
+    //     for (int i = 0; i < kMAX_SHIP; ++i) {
+    //         if (ship_info[i].last_ != -1) current.ship[i].go(-1, current);
+    //     }
+    //     is_special_frame = true;
+    // }
     // 维护ship_info -> 读取
     for (int i = 0; i < kMAX_SHIP; i++) {
         auto& ship = current.ship[i];
@@ -69,8 +77,8 @@ void ships_behave(Frame& current) {
                     // 到了虚拟点，解除强制返回限制
                     ship.returning_ = false;
                 }
-                // std::cerr << "Ship " << i << " reaches " << ship.parkid_
-                //           << " at frame" << current.code_ << std::endl;
+                std::cerr << "Ship " << i << " reaches " << ship.parkid_
+                          << " at frame" << current.code_ << std::endl;
                 if (info.done_ == 1) info.done_ = 2;
             }
             info.last_ = ship.parkid_;

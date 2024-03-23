@@ -53,8 +53,8 @@ void Ship::go(int id, Frame& current) {
         action_sequence.push(s);
     }
 
-    // std::cerr << "Ship " << id_ << " from " << now_id << " left for " << id
-    //           << " at frame " << current.code_ << std::endl;
+    std::cerr << "Ship " << id_ << " from " << now_id << " left for " << id
+              << " at frame " << current.code_ << std::endl;
     // std::cerr << "Status: " << park[now_id].tend_ship.size() << "&&"
     //           << 1010 + park[now_id].time_ << "&&" << Park::tot_ban
     //           << std::endl;

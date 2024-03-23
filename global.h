@@ -10,8 +10,13 @@
 #include "Grid.h"
 #include "Park.h"
 
+extern bool is_map_open();
+extern bool is_map_close();
+extern bool is_map_unknown();
+
 extern int cnt_good;
 extern int final_score;
+extern int cnt_barriar, cnt_ground;
 
 extern Ship_Keep ship_info[kMAX_SHIP];
 extern std::queue<std::string> action_sequence;
