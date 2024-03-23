@@ -10,6 +10,16 @@
 #include "global.h"
 
 void print_debug() {
+    if (is_map_close()) {
+        std::cerr << "close map" << std::endl;
+    }
+    if (is_map_open()) {
+        std::cerr << "open map" << std::endl;
+    }
+    if (is_map_unknown()) {
+        std::cerr << "unknown map" << std::endl;
+    }
+
     std::cerr << "Map:" << std::endl;
     std::cerr << "cnt_barriar=" << cnt_barriar << " | cnt_ground=" << cnt_ground
               << std::endl;

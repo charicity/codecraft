@@ -154,52 +154,57 @@ double getw(int robotid, int dis1, int dis2, int val, int expire_time,
     //  } else {
     //      return (double)((val * 10) + time) / d;
     //  }
-    // 1/8概率
-    if (dis1 == 0) return 100000;
-    double d = dis1;
-    if (val >= 175)
-        return (double)(val * 10 + (1000 - expire_time) * 7) / d;
-    if (val >= 150)
-        return (double)(val * 10 + (1000 - expire_time) * 6) / d;
-    if (val >= 125)
-        return (double)(val * 10 + (1000 - expire_time) * 5) / d;
-    if (val >= 100)
-        return (double)(val * 10 + (1000 - expire_time) * 4) / d;
-    if (val >= 75)
-        return (double)(val * 10 + (1000 - expire_time) * 3) / d;
-    if (val >= 50) return (double)(val*10+(1000 - expire_time)*2) / d;
-    if (val >= 25) return (double)(val*10+1000 - expire_time) / d;
-    return 0;
-    // 小于25的不捡了
-    //  都为1/5概率
-    //  if(current.ship[0].capacity_<=60){
-    //      int d = pow((dis1),1);
-    //      if(d==0){
-    //          if (val >= 100) return 15000;
-    //          else
-    //              return 0;
-    //      }
-    //      return val / d;
-    //      if (val >= 160)
-    //          return (double)(val * 60 + (1000 - expire_time) * 4) / d;
-    //      if (val >= 120) return (double)(val * 60 + (1000 - expire_time) * 3)
-    //      / d; if (val >= 80) return (double)(val * 60 + (1000 - expire_time)
-    //      * 2) / d; if (val >= 40) return (double)(val * 60 + (1000 -
-    //      expire_time) * 1) / d; return (double)(val * 60 + (1000 -
-    //      expire_time) * 1) / d;
-    //  }
-    //  else {
-    //      int d = pow((dis1+dis2),2);
-    //      // if(current.code_<=3000){
-    //      //     return val / d;
-    //      // }
-    //      if (val >= 160) return (double)(val * 10 + (1000 - expire_time) * 7)
-    //      / d; if (val >= 120) return (double)(val * 10 + (1000 - expire_time)
-    //      * 5) / d; if (val >= 80) return (double)(val * 10 + (1000 -
-    //      expire_time) * 3) / d; if (val >= 40) return (double)(val * 10 +
-    //      (1000 - expire_time) * 2) / d; return (double)(val * 10 + (1000 -
-    //      expire_time) * 1) / d;
-    //  }
+    if (is_map_open()) {  // 243246
+        if (val >= 175)
+            return (double)(val * 10 + (1000 - expire_time) * 5) /
+                   (dis1 + dis2);
+        if (val >= 150)
+            return (double)(val * 10 + (1000 - expire_time) * 4) /
+                   (dis1 + dis2);
+        if (val >= 125)
+            return (double)(val * 10 + (1000 - expire_time) * 3) /
+                   (dis1 + dis2);
+        if (val >= 100)
+            return (double)(val * 10 + (1000 - expire_time) * 2) /
+                   (dis1 + dis2);
+        if (val >= 75)
+            return (double)(val * 10 + (1000 - expire_time) * 1) /
+                   (dis1 + dis2);
+        if (val >= 50)
+            return (double)(val * 10 + 1000 - expire_time) / (dis1 + dis2);
+        return 0;
+    } else if (is_map_close()) {
+        if (dis1 == 0) return 100000;
+        double d = dis1;
+        if (val >= 175)
+            return (double)(val * 10 + (1000 - expire_time) * 8) / d;
+        if (val >= 150)
+            return (double)(val * 10 + (1000 - expire_time) * 7) / d;
+        if (val >= 125)
+            return (double)(val * 10 + (1000 - expire_time) * 6) / d;
+        if (val >= 100)
+            return (double)(val * 10 + (1000 - expire_time) * 5) / d;
+        if (val >= 75) return (double)(val * 10 + (1000 - expire_time) * 4) / d;
+        if (val >= 50) return (double)(val * 10 + (1000 - expire_time)*3) / d;
+        if (val >= 25) return (double)(val * 10 + (1000 - expire_time)*2) / d;
+        return 0;
+
+    } else {  // 239383
+        if (dis1 == 0) return 100000;
+        double d = dis1;
+        if (val >= 175)
+            return (double)(val * 10 + (1000 - expire_time) * 6) / d;
+        if (val >= 150)
+            return (double)(val * 10 + (1000 - expire_time) * 5) / d;
+        if (val >= 125)
+            return (double)(val * 10 + (1000 - expire_time) * 4) / d;
+        if (val >= 100)
+            return (double)(val * 10 + (1000 - expire_time) * 3) / d;
+        if (val >= 75) return (double)(val * 10 + (1000 - expire_time) * 2) / d;
+        if (val >= 50) return (double)(val * 10 + 1000 - expire_time) / d;
+        if (val >= 25) return (double)(val * 10 + 1000 - expire_time) / d;
+        return 0;
+    }
 }
 
 // 得到机器人到park[id]的最短路径的长度

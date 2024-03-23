@@ -43,21 +43,21 @@ void ships_behave(Frame& current) {
         is_special_frame = true;
     }
 
-    // if (current.code_ == 15000 - 500 - 2 - 2 * Park::max_back) {
-    //     //特判半空帧
-    //     for (int i = 0; i < kMAX_SHIP; ++i) {
-    //         if (ship_info[i].last_ != -1) current.ship[i].go(-1, current);
-    //     }
-    //     is_special_frame = true;
-    // }
-
-    if (current.code_ == 15000 - 10 - 2 * Park::max_back) {
+    if (current.code_ == 15000 - 500 - 2 - 2 * Park::max_back) {
         // 特判半空帧
         for (int i = 0; i < kMAX_SHIP; ++i) {
             if (ship_info[i].last_ != -1) current.ship[i].go(-1, current);
         }
         is_special_frame = true;
     }
+
+    // if (current.code_ == 15000 - 10 - 2 * Park::max_back) {
+    //     // 特判半空帧
+    //     for (int i = 0; i < kMAX_SHIP; ++i) {
+    //         if (ship_info[i].last_ != -1) current.ship[i].go(-1, current);
+    //     }
+    //     is_special_frame = true;
+    // }
 
     // if (current.code_ == 15000 - Park::max_back - 8) {
     //     // 特判半空帧
