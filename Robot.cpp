@@ -141,7 +141,7 @@ double getw(int robotid, int dis1, int dis2, int val, int expire_time,
             return (double)(val * 10 + (1000 - expire_time) * 3) / d;
         if (val >= 75) return (double)(val * 10 + (1000 - expire_time) * 2) / d;
         if (val >= 50) return (double)(val * 10 + 1000 - expire_time) / d;
-        // if (val >= 25) return (double)(val * 10 + 1000 - expire_time) / d;
+        if (val >= 25) return (double)(val * 10 + 1000 - expire_time) / d;
         return 0;
     }
 }
@@ -209,7 +209,7 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
     int cnt = 0;
     while (hh <= tt) {
         Axis u = que[hh++];
-        if (cnt >= 20000) break;
+        if (cnt >= 25000) break;
         // 随机
         int a = rand() % 4, b = rand() % 4;
         std::swap(dir[a], dir[b]);
