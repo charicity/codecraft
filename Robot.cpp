@@ -98,111 +98,50 @@ void Robot::input(int id) {
 // dis1为从机器人到货物的最短距离，dis2为从货物到泊位的最短距离 ,权值计算函数
 double getw(int robotid, int dis1, int dis2, int val, int expire_time,
             Frame& current) {
-    // if (robotid == 0) return 1.0/(dis1 + dis2);
-    // if(robotid%3==0)return (double)val / (dis1 + dis2);
-    // if(robotid%3==1)return (double)(val*val) / (dis1 + dis2);
-    // return (double)(val*val*val) / (dis1 + dis2);
     if (dis1 + dis2 == 0) return 10000000;
-    // return (double)(val * 10 + 1000 - expire_time) / (dis1);
-    // 小于25的不捡了
-    //  return 0;
-    //  都为1/4概率
-    //  总共16种情况
-    //  double d = (dis1 + dis2);
-    //  double w = 0;
-    //  int time = (1000 - expire_time);  // 已经使用的时间越大越紧急
-    //  if (time >= 750)
-    //      w = 4;
-    //  else if (time >= 500)
-    //      w = 3;
-    //  else if (time >= 200)
-    //      w = 2;
-    //  else
-    //      w = 1;
-    //  double ans = (double)val / 200 * (1.0 - (double)(dis1 + dis2) / 1000) *
-    //               ((double)time / 1000);
-    //  return ans;
-    //  if (val >= 150) {
-    //      if (time >= 750)
-    //          return (double)(val * 10 + time * 5) / d;
-    //      else if (time >= 500)
-    //          return (double)(val * 10 + time * 5) / d;
-    //      else if (time >= 250)
-    //          return (double)(val * 10 + time * 2) / d;
-    //      else
-    //          return (double)(val * 10 + time * 2) / d;
-    //  }
-    //  if (val >= 100) {
-    //      if (time >= 750)
-    //          return (double)(val * 10 + time * 5) / d;
-    //      else if (time >= 500)
-    //          return (double)(val * 10 + time * 5) / d;
-    //      else if (time >= 250)
-    //          return (double)(val * 10 + time * 2) / d;
-    //      else
-    //          return (double)(val * 10 + time * 2) / d;
-    //  }
-    //  if (val >= 50) {
-    //      if (time >= 750)
-    //          return (double)(val * 10 + time * 2) / d;
-    //      else if (time >= 500)
-    //          return (double)(val * 10 + time * 2) / d;
-    //      else if (time >= 250)
-    //          return (double)(val * 10 + time * 1) / d;
-    //      else
-    //          return (double)(val * 10 + time * 1) / d;
-    //  } else {
-    //      return (double)((val * 10) + time) / d;
-    //  }
-    if (is_map_open()) {  // 243246
+    if (is_map_open()) {  // 248691
+        double d = dis1;
+        if (d == 0) return 100000;
         if (val >= 175)
-            return (double)(val * 10 + (1000 - expire_time) * 5) /
-                   (dis1 + dis2);
+            return (double)(val * 10 + (1000 - expire_time) * 5) / d;
         if (val >= 150)
-            return (double)(val * 10 + (1000 - expire_time) * 4) /
-                   (dis1 + dis2);
+            return (double)(val * 10 + (1000 - expire_time) * 4) / d;
         if (val >= 125)
-            return (double)(val * 10 + (1000 - expire_time) * 3) /
-                   (dis1 + dis2);
+            return (double)(val * 10 + (1000 - expire_time) * 3) / d;
         if (val >= 100)
-            return (double)(val * 10 + (1000 - expire_time) * 2) /
-                   (dis1 + dis2);
-        if (val >= 75)
-            return (double)(val * 10 + (1000 - expire_time) * 1) /
-                   (dis1 + dis2);
-        if (val >= 50)
-            return (double)(val * 10 + 1000 - expire_time) / (dis1 + dis2);
+            return (double)(val * 10 + (1000 - expire_time) * 2) / d;
+        if (val >= 75) return (double)(val * 10 + (1000 - expire_time) * 1) / d;
+        if (val >= 50) return (double)(val * 10 + 1000 - expire_time) / d;
         return 0;
     } else if (is_map_close()) {
         if (dis1 == 0) return 100000;
         double d = dis1;
         if (val >= 175)
-            return (double)(val * 10 + (1000 - expire_time) * 8) / d;
+            return (double)(val * 25 + (1000 - expire_time) * 6) / d;
         if (val >= 150)
-            return (double)(val * 10 + (1000 - expire_time) * 7) / d;
+            return (double)(val * 20 + (1000 - expire_time) * 5) / d;
         if (val >= 125)
-            return (double)(val * 10 + (1000 - expire_time) * 6) / d;
+            return (double)(val * 15 + (1000 - expire_time) * 4) / d;
         if (val >= 100)
-            return (double)(val * 10 + (1000 - expire_time) * 5) / d;
-        if (val >= 75) return (double)(val * 10 + (1000 - expire_time) * 4) / d;
-        if (val >= 50) return (double)(val * 10 + (1000 - expire_time) * 3) / d;
-        if (val >= 25) return (double)(val * 10 + (1000 - expire_time) * 2) / d;
+            return (double)(val * 10 + (1000 - expire_time) * 3) / d;
+        if (val >= 75) return (double)(val * 8 + (1000 - expire_time) * 2) / d;
+        if (val >= 50) return (double)(val * 6 + (1000 - expire_time) * 1) / d;
+        if (val >= 25) return (double)(val * 4 + (1000 - expire_time) * 1) / d;
         return 0;
-
     } else {  // 239383
         if (dis1 == 0) return 100000;
         double d = dis1;
         if (val >= 175)
-            return (double)(val * 10 + (1000 - expire_time) * 6) / d;
+            return (double)(val * 10 + (1000 - expire_time) * 7) / d;
         if (val >= 150)
             return (double)(val * 10 + (1000 - expire_time) * 5) / d;
         if (val >= 125)
-            return (double)(val * 10 + (1000 - expire_time) * 4) / d;
-        if (val >= 100)
             return (double)(val * 10 + (1000 - expire_time) * 3) / d;
-        if (val >= 75) return (double)(val * 10 + (1000 - expire_time) * 2) / d;
+        if (val >= 100)
+            return (double)(val * 10 + (1000 - expire_time) * 2) / d;
+        if (val >= 75) return (double)(val * 10 + (1000 - expire_time) * 1) / d;
         if (val >= 50) return (double)(val * 10 + 1000 - expire_time) / d;
-        if (val >= 25) return (double)(val * 10 + 1000 - expire_time) / d;
+        // if (val >= 25) return (double)(val * 10 + 1000 - expire_time) / d;
         return 0;
     }
 }
@@ -270,7 +209,7 @@ std::pair<Axis, Axis> Robot::get_dir(std::set<Goods>& unpickedGoods,
     int cnt = 0;
     while (hh <= tt) {
         Axis u = que[hh++];
-        if (cnt >= 25000) break;
+        if (cnt >= 20000) break;
         // 随机
         int a = rand() % 4, b = rand() % 4;
         std::swap(dir[a], dir[b]);
