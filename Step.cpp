@@ -78,7 +78,7 @@ void ControlLogic::frame_process(Frame &current) {
 
     static bool is_first = true;
     if (is_first == true && current.code_ + 4 * Park::max_back >= 15000) {
-        if (is_map_open() || is_map_unknown()) {
+        if (is_map_open()) {
             std::cerr << "banning at frame " << current.code_ << std::endl;
             is_first = false;
             std::vector<std::pair<int, int>> pii;
