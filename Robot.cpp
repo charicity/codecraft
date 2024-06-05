@@ -156,15 +156,15 @@ double Robot::get_toship_w(int id, std::vector<std::vector<int>>& dis,
     auto park_good = park[id].goods_queue_;
     double sum = -dis_to_ship;
     if (park[id].is_ban) sum -= 100000;
-    // if (park[id].is_ban > current.code_) sum -= 100000;
-    // if (park_good.size() <= 10)
-    //     sum += park_good.size() * 4;  // 尽量搬来吧
-    // else if (park_good.size() <= 20)
-    //     sum += park_good.size() * 3;
-    // else if (park_good.size() <= 40)  // 此时他还是有点物品的勉强可以搬来
-    //     sum += park_good.size() * 2;
-    // else
-    //     sum -= 100;  // 此时他的附近基本没有物品了，不要再搬来了
+    if (park[id].is_ban > current.code_) sum -= 100000;
+    if (park_good.size() <= 10)
+        sum += park_good.size() * 4;  // 尽量搬来吧
+    else if (park_good.size() <= 20)
+        sum += park_good.size() * 3;
+    else if (park_good.size() <= 40)  // 此时他还是有点物品的勉强可以搬来
+        sum += park_good.size() * 2;
+    else
+        sum -= 100;  // 此时他的附近基本没有物品了，不要再搬来了
     return sum;
 }
 // robot到哪里取货,以及要的货物的位置
